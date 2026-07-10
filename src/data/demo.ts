@@ -1,3 +1,4 @@
+/** Demo tasks + security checks. */
 export const DEMO = {
   "tasks": [
     {
