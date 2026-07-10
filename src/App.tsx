@@ -29,7 +29,9 @@ function ThemeToggle() {
 function Shell({ children }: { children: React.ReactNode }) {
   const [chatOpen, setChatOpen] = useState(false)
   return (
-    <div className={`shell${chatOpen ? ' shell--chat' : ''}`}>
+    <>
+      <a href="#main-content" className="skip-link">Skip to content</a>
+      <div id="main-content" className={`shell${chatOpen ? ' shell--chat' : ''}`}>
       <header className="topbar">
         <Link to="/" className="brand">
           OpenClaw One
@@ -56,8 +58,10 @@ function Shell({ children }: { children: React.ReactNode }) {
             openclaw-one
           </a>
         </p>
+              <p className="recruiter-strip">Stack: TypeScript · React · Vite · Cloudflare Pages · Expo · GitHub</p>
       </footer>
     </div>
+    </>
   )
 }
 
