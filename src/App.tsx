@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Link, NavLink } from 'react-router-dom'
 import './styles.css'
 import { initTheme, toggleTheme, getTheme } from './theme'
@@ -6,20 +6,21 @@ import { ChatDock } from './ChatDock'
 import { seedContext } from './seedContext'
 import { DEMO } from './data'
 
-const FEATURES = [{"t": "Product narrative", "d": "Sales-ready homepage that explains mobile agent ops clearly."}, {"t": "Task board demo", "d": "Kanban columns that mirror the native app."}, {"t": "Vault UX demo", "d": "Illustrates AES-style local secrets flow without storing real keys in the cloud."}, {"t": "Security checklist", "d": "Network and device hygiene checks as a guided UI."}, {"t": "Companion chat", "d": "Ask how to connect a gateway \u2014 answers from the docs graph."}, {"t": "Theme toggle", "d": "Light/dark polished for App Store screenshots parity."}] as { t: string; d: string }[]
-const INTEGRATIONS = [{"t": "Expo / React Native app", "d": "iOS & Android client via EAS"}, {"t": "WebSocket agent gateway", "d": "Real-time chat with your backend"}, {"t": "Secure Store + biometrics", "d": "Device-bound secrets patterns"}, {"t": "OpenAI-assisted onboarding", "d": "Setup chat on this site"}] as { t: string; d: string }[]
-const RECRUITER = ["Mobile + web: Expo RN product with matching marketing app", "Security-minded UX: vault, biometrics, threat checklist", "Real-time systems: WebSocket gateway integration story", "Design system: consistent tokens, a11y-sized controls"] as string[]
-const QUICK = ["Deep link from site into Expo Go / TestFlight", "Live gateway status badge", "Push-notification preference mock", "Share encrypted backup flow docs"] as string[]
+const FEATURES = [
+  { t: 'Product narrative', d: 'Sales-ready homepage that explains mobile agent ops clearly.' },
+  { t: 'Tabbed demos', d: 'Chat, tasks, vault, and security scan as separate surfaces.' },
+  { t: 'Native vs web labels', d: 'Honest about what runs in Expo vs this browser demo.' },
+  { t: 'Security checklist', d: 'Device hygiene patterns as a guided UI.' },
+  { t: 'Companion chat', d: 'Ask how to connect a gateway — answers from the docs graph.' },
+  { t: 'Theme toggle', d: 'Light/dark polished for screenshot parity.' },
+]
+
+const TABS = ['tasks', 'vault', 'scan'] as const
 
 function ThemeToggle() {
   const [theme, setTheme] = useState(getTheme())
   return (
-    <button
-      type="button"
-      className="theme-toggle"
-      aria-label="Toggle light and dark mode"
-      onClick={() => setTheme(toggleTheme())}
-    >
+    <button type="button" className="theme-toggle" aria-label="Toggle theme" onClick={() => setTheme(toggleTheme())}>
       {theme === 'dark' ? 'Light' : 'Dark'}
     </button>
   )
@@ -30,10 +31,14 @@ function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className={`shell${chatOpen ? ' shell--chat' : ''}`}>
       <header className="topbar">
-        <Link to="/" className="brand">OpenClaw One</Link>
+        <Link to="/" className="brand">
+          OpenClaw One
+        </Link>
         <nav className="nav" aria-label="Primary">
-          <NavLink to="/" end>Home</NavLink>
-          <NavLink to="/app">App</NavLink>
+          <NavLink to="/" end>
+            Home
+          </NavLink>
+          <NavLink to="/app">Demo</NavLink>
           <NavLink to="/features">Features</NavLink>
         </nav>
         <ThemeToggle />
@@ -42,10 +47,15 @@ function Shell({ children }: { children: React.ReactNode }) {
       <ChatDock open={chatOpen} onOpenChange={setChatOpen} context={seedContext()} product="openclaw-one" />
       <footer className="footer">
         <p>
-          OpenClaw One · public portfolio product ·{' '}
-          <a href="https://github.com/brianference/openclaw-one" target="_blank" rel="noreferrer">GitHub</a>
+          Public face of{' '}
+          <a href="https://github.com/brianference/openclaw-mobile" target="_blank" rel="noreferrer">
+            openclaw-mobile
+          </a>{' '}
+          ·{' '}
+          <a href="https://github.com/brianference/openclaw-one" target="_blank" rel="noreferrer">
+            openclaw-one
+          </a>
         </p>
-        <p className="fine">Built for real use and for hiring conversations — stack, constraints, and integrations included.</p>
       </footer>
     </div>
   )
@@ -55,18 +65,25 @@ function Home() {
   return (
     <Shell>
       <section className="hero">
-        <p className="kicker">OpenClaw One · the public face of OpenClaw Mobile</p>
-        <h1>Mobile command for AI agents — chat, tasks, vault, scan.</h1>
-        <p className="lede">Product site and interactive web companion for OpenClaw Mobile: AI chat, kanban, encrypted vault concepts, and device security checks.</p>
+        <p className="kicker">OpenClaw One · mobile command for AI agents</p>
+        <h1>Chat, tasks, vault, scan — on your phone.</h1>
+        <p className="lede">
+          Product site for the Expo OpenClaw client. This web app demos the surfaces; the native repo is the real
+          mobile binary.
+        </p>
         <div className="cta-row">
-          <Link className="btn btn-primary" to="/app">Open the app</Link>
-          <Link className="btn btn-ghost" to="/features">See features</Link>
+          <Link className="btn btn-primary" to="/app">
+            Open web demo
+          </Link>
+          <a className="btn btn-ghost" href="https://github.com/brianference/openclaw-mobile" target="_blank" rel="noreferrer">
+            Native source
+          </a>
         </div>
         <ul className="hero-points">
-          <li>Light & dark mode</li>
-          <li>Grounded AI chat</li>
-          <li>No account required</li>
-          <li>Cloudflare Pages ready</li>
+          <li>Web demo</li>
+          <li>Native Expo</li>
+          <li>Security-minded</li>
+          <li>Light & dark</li>
         </ul>
       </section>
       <section className="grid-3">
@@ -77,17 +94,6 @@ function Home() {
           </article>
         ))}
       </section>
-      <section className="panel">
-        <h2>Integrations</h2>
-        <div className="grid-2">
-          {INTEGRATIONS.map((i) => (
-            <div key={i.t} className="card card-slim">
-              <h3>{i.t}</h3>
-              <p>{i.d}</p>
-            </div>
-          ))}
-        </div>
-      </section>
     </Shell>
   )
 }
@@ -97,7 +103,6 @@ function FeaturesPage() {
     <Shell>
       <section className="panel">
         <h1>Features</h1>
-        <p className="lede">Product depth first — the same signals recruiters and technical founders look for.</p>
         <div className="grid-2">
           {FEATURES.map((f) => (
             <article key={f.t} className="card">
@@ -107,23 +112,83 @@ function FeaturesPage() {
           ))}
         </div>
       </section>
-      <section className="panel subtle">
-        <h2>Engineering signals</h2>
-        <ul className="check-list">
-          {RECRUITER.map((r) => (
-            <li key={r}>{r}</li>
-          ))}
-        </ul>
-      </section>
-      <section className="panel">
-        <h2>Quick wins next</h2>
-        <ul className="check-list">
-          {QUICK.map((q) => (
-            <li key={q}>{q}</li>
-          ))}
-        </ul>
-      </section>
     </Shell>
+  )
+}
+
+function ProductApp() {
+  const [tab, setTab] = useState<(typeof TABS)[number]>('tasks')
+  const cols = ['todo', 'doing', 'done'] as const
+
+  return (
+    <section className="panel">
+      <div className="chips">
+        <span className="chip chip-warn">Web demo</span>
+        <span className="chip">Native: Expo / openclaw-mobile</span>
+      </div>
+      <h1>Mobile companion demos</h1>
+      <p className="lede">Switch surfaces below. Chat is the dock FAB — same assistant as production product framing.</p>
+
+      <div className="tabs" role="tablist" aria-label="Demo surfaces">
+        {TABS.map((t) => (
+          <button key={t} type="button" role="tab" aria-selected={tab === t} className={`tab${tab === t ? ' is-active' : ''}`} onClick={() => setTab(t)}>
+            {t}
+          </button>
+        ))}
+      </div>
+
+      {tab === 'tasks' && (
+        <div className="kanban">
+          {cols.map((col) => (
+            <div key={col} className="kanban-col">
+              <h3>{col}</h3>
+              {DEMO.tasks
+                .filter((t) => t.col === col)
+                .map((t) => (
+                  <div key={t.id} className="card card-slim">
+                    {t.title}
+                  </div>
+                ))}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {tab === 'vault' && (
+        <div className="card">
+          <h2>Secrets vault (demo)</h2>
+          <p className="lede">Illustrates local encrypted storage patterns. No real secrets are stored in this site.</p>
+          <ul className="check-list">
+            <li>AES-style envelope on device (native Secure Store)</li>
+            <li>Biometric unlock optional</li>
+            <li>Never sync raw keys to the server</li>
+          </ul>
+          <p className="meta">This web card is UI only — implement secrets only in the Expo app.</p>
+        </div>
+      )}
+
+      {tab === 'scan' && (
+        <>
+          <h2>Security checklist</h2>
+          <ul className="check-list">
+            {DEMO.checks.map((c) => (
+              <li key={c.id}>
+                <span className={c.ok ? 'ok' : 'bad'}>{c.ok ? '✓' : '!'}</span> {c.label}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      <div className="sticky-cta">
+        <a className="btn btn-primary" href="https://github.com/brianference/openclaw-mobile" target="_blank" rel="noreferrer">
+          Get native app source
+        </a>
+        <button type="button" className="btn btn-ghost" onClick={() => document.querySelector<HTMLButtonElement>('.chat-fab')?.click()}>
+          Ask setup chat
+        </button>
+      </div>
+    </section>
   )
 }
 
@@ -134,35 +199,6 @@ function AppPage() {
     </Shell>
   )
 }
-
-
-function ProductApp() {
-  const cols = ['todo', 'doing', 'done'] as const
-  return (
-    <section className="panel">
-      <h1>Mobile companion demos</h1>
-      <p className="lede">Web previews of OpenClaw Mobile surfaces. Native app: <a href="https://github.com/brianference/openclaw-mobile" target="_blank" rel="noreferrer">openclaw-mobile</a></p>
-      <h2>Task board</h2>
-      <div className="kanban">
-        {cols.map((col) => (
-          <div key={col} className="kanban-col">
-            <h3>{col}</h3>
-            {DEMO.tasks.filter((t) => t.col === col).map((t) => (
-              <div key={t.id} className="card card-slim">{t.title}</div>
-            ))}
-          </div>
-        ))}
-      </div>
-      <h2>Security checklist</h2>
-      <ul className="check-list">
-        {DEMO.checks.map((c) => (
-          <li key={c.id}><span className={c.ok ? 'ok' : 'bad'}>{c.ok ? '✓' : '!'}</span> {c.label}</li>
-        ))}
-      </ul>
-    </section>
-  )
-}
-
 
 export default function App() {
   useEffect(() => {
