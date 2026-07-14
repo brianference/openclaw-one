@@ -17,16 +17,18 @@ Generated after full MobileClaw feature port (public anonymized demo) and 1,021 
 
 ## 10 highest-value improvements
 
-1. **PWA install + offline shell** — cache seed UI for true phone home-screen use.
-2. **Drag-and-drop kanban** — replace tap-to-advance with pointer DnD.
-3. **In-app modals instead of `prompt()`** — polished create flows for tasks/notes/vault.
-4. **Brain full-text search** — filter notes as the list grows.
-5. **Conversation sidebar on desktop** — use the right rail for chat history.
-6. **Optional WebCrypto vault** — encrypt demo vault with a user passphrase (still local-only).
-7. **Structured accessibility audit** — roving tabindex on tab bar, live regions for toasts.
-8. **Visual regression snapshots** — Playwright per design option (liquid/oled/aurora × light/dark).
-9. **Shareable demo deep links** — `/t/tasks`, `/t/vault` routes for recruiter walkthroughs.
-10. **Grounded chat analytics strip** — show which seed context slices informed the last answer.
+| # | Item | Status |
+|---|------|--------|
+| 1 | PWA install + offline shell | **Done** — `manifest.webmanifest` + `sw.js` |
+| 2 | Drag-and-drop kanban | **Done** — HTML5 DnD + tap-to-advance |
+| 3 | In-app modals (no `prompt`) | **Done** — shared `Modal` for create flows |
+| 4 | Brain full-text search | **Done** |
+| 5 | Conversation sidebar | **Done** — chat rail on wider phone/desktop |
+| 6 | Optional WebCrypto vault | **Done** — PBKDF2 + AES-GCM local lock |
+| 7 | A11y (tab roving + live toasts) | **Done** |
+| 8 | Visual regression snapshots | Pending — Playwright matrix |
+| 9 | Shareable deep links | **Done** — `/chat`, `/t/vault`, `/?coach=1` |
+| 10 | Grounded chat context strip | **Done** |
 
 ## Simulation summary
 

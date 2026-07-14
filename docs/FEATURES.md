@@ -46,6 +46,22 @@ MobileClaw is an AI agent command surface for mobile: chat with personas, tasks,
 
 ---
 
+## Deep links (shareable)
+
+| Path | Opens |
+|------|--------|
+| `/` or `/home` | Home |
+| `/chat` | Chat |
+| `/tasks` | Tasks |
+| `/brain` | Brain |
+| `/more` | More hub |
+| `/t/vault`, `/t/kanban`, … | More surfaces |
+| `/?coach=1` | Opens Setup coach |
+
+## PWA
+
+Installable via `manifest.webmanifest`. Service worker `sw.js` caches the shell and hashed assets for offline UI (API still needs network).
+
 ## Setup assistant (coach)
 
 The floating **Setup coach** helps first-time visitors:

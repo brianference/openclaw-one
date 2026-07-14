@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react'
 import { addNote, toggleNotePin } from '../../lib/store'
 import { useDemoStore } from '../../lib/useDemoStore'
 import type { NoteCategory } from '../../data/seed'
+import { Modal } from '../ui/Modal'
+import { useToast } from '../ui/Toast'
 
 const CAT: Record<NoteCategory, { label: string; emoji: string; color: string }> = {
   idea: { label: 'Idea', emoji: '💡', color: '#f59e0b' },
@@ -12,17 +14,56 @@ const CAT: Record<NoteCategory, { label: string; emoji: string; color: string }>
 
 export function BrainScreen() {
   const s = useDemoStore()
+  const { toast } = useToast()
   const [filter, setFilter] = useState<NoteCategory | 'all'>('all')
+  const [query, setQuery] = useState('')
+  const [open, setOpen] = useState(false)
+  const [title, setTitle] = useState('')
+  const [content, setContent] = useState('')
+  const [category, setCategory] = useState<NoteCategory>('note')
 
   const list = useMemo(() => {
     const base = filter === 'all' ? s.notes : s.notes.filter((n) => n.category === filter)
-    return [...base].sort((a, b) => Number(b.pinned) - Number(a.pinned))
-  }, [s.notes, filter])
+    const q = query.trim().toLowerCase()
+    const searched = q
+      ? base.filter(
+          (n) =>
+            n.title.toLowerCase().includes(q) ||
+            n.content.toLowerCase().includes(q) ||
+            n.category.includes(q),
+        )
+      : base
+    return [...searched].sort((a, b) => Number(b.pinned) - Number(a.pinned))
+  }, [s.notes, filter, query])
+
+  function submit() {
+    if (!title.trim()) return
+    addNote(title, content, category)
+    toast('Note saved')
+    setTitle('')
+    setContent('')
+    setCategory('note')
+    setOpen(false)
+  }
 
   return (
     <div className="screen">
       <p className="large-title">Brain</p>
       <p className="sub">Second brain · local notes only</p>
+
+      <div className="pad" style={{ marginBottom: 8 }}>
+        <label className="visually-hidden" htmlFor="brain-search">
+          Search notes
+        </label>
+        <input
+          id="brain-search"
+          className="search-input"
+          type="search"
+          placeholder="Search notes…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </div>
 
       <div className="chips">
         {(
@@ -46,10 +87,17 @@ export function BrainScreen() {
       </div>
 
       <div className="stack">
+        {list.length === 0 ? (
+          <p className="empty">{query ? 'No notes match your search.' : 'No notes here.'}</p>
+        ) : null}
         {list.map((note) => {
           const cat = CAT[note.category]
           return (
-            <article key={note.id} className="item" style={{ borderLeftColor: cat.color, flexDirection: 'column' }}>
+            <article
+              key={note.id}
+              className="item"
+              style={{ borderLeftColor: cat.color, flexDirection: 'column' }}
+            >
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
                 <span>{cat.emoji}</span>
                 <span className="chip is-on" style={{ minHeight: 28, padding: '2px 8px' }}>
@@ -64,7 +112,15 @@ export function BrainScreen() {
               <p className="muted" style={{ margin: '4px 0 0' }}>
                 {note.content}
               </p>
-              <button type="button" className="chip" style={{ alignSelf: 'flex-start' }} onClick={() => toggleNotePin(note.id)}>
+              <button
+                type="button"
+                className="chip"
+                style={{ alignSelf: 'flex-start' }}
+                onClick={() => {
+                  toggleNotePin(note.id)
+                  toast(note.pinned ? 'Unpinned' : 'Pinned')
+                }}
+              >
                 {note.pinned ? 'Unpin' : 'Pin'}
               </button>
             </article>
@@ -73,19 +129,60 @@ export function BrainScreen() {
       </div>
 
       <div className="fab-wrap">
-        <button
-          type="button"
-          className="btn"
-          onClick={() => {
-            const title = window.prompt('Note title')
-            if (!title) return
-            const content = window.prompt('Note content') || ''
-            addNote(title, content, 'note')
-          }}
-        >
+        <button type="button" className="btn" onClick={() => setOpen(true)}>
           + New note
         </button>
       </div>
+
+      <Modal
+        open={open}
+        title="New note"
+        onClose={() => setOpen(false)}
+        footer={
+          <>
+            <button type="button" className="btn btn-ghost" onClick={() => setOpen(false)}>
+              Cancel
+            </button>
+            <button type="button" className="btn" onClick={submit} disabled={!title.trim()}>
+              Save note
+            </button>
+          </>
+        }
+      >
+        <div className="field">
+          <label htmlFor="note-title">Title</label>
+          <input
+            id="note-title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Title"
+            autoFocus
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="note-cat">Category</label>
+          <select
+            id="note-cat"
+            value={category}
+            onChange={(e) => setCategory(e.target.value as NoteCategory)}
+          >
+            <option value="note">Note</option>
+            <option value="idea">Idea</option>
+            <option value="todo">Todo</option>
+            <option value="research">Research</option>
+          </select>
+        </div>
+        <div className="field">
+          <label htmlFor="note-body">Content</label>
+          <textarea
+            id="note-body"
+            rows={4}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Details…"
+          />
+        </div>
+      </Modal>
     </div>
   )
 }

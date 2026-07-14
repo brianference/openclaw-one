@@ -9,15 +9,17 @@ import { SetupAssistant } from './components/SetupAssistant'
 import type { MoreView, TabId } from './data/seed'
 import { applyChrome, initTheme, toggleTheme } from './theme'
 import { useDemoStore } from './lib/useDemoStore'
+import { parseLocation, pushRoute } from './lib/routes'
 
 /**
  * Public MobileClaw companion — full feature surface, anonymized, local-only.
  */
 export default function App() {
   const state = useDemoStore()
-  const [tab, setTab] = useState<TabId>('home')
-  const [moreView, setMoreView] = useState<MoreView>('hub')
-  const [coachOpen, setCoachOpen] = useState(false)
+  const initial = parseLocation()
+  const [tab, setTab] = useState<TabId>(initial.tab)
+  const [moreView, setMoreView] = useState<MoreView>(initial.moreView)
+  const [coachOpen, setCoachOpen] = useState(initial.coach)
 
   useEffect(() => {
     initTheme()
@@ -27,33 +29,54 @@ export default function App() {
     applyChrome(state.design, state.themeMode)
   }, [state.design, state.themeMode])
 
+  // Sync browser history → app
+  useEffect(() => {
+    const onPop = () => {
+      const r = parseLocation()
+      setTab(r.tab)
+      setMoreView(r.moreView)
+      if (r.coach) setCoachOpen(true)
+    }
+    window.addEventListener('popstate', onPop)
+    pushRoute(initial.tab, initial.moreView, true)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
+
   // First visit: open setup coach after a short beat
   useEffect(() => {
-    if (!state.setup.coachSeen && !state.setup.coachDismissed) {
+    if (!state.setup.coachSeen && !state.setup.coachDismissed && !initial.coach) {
       const t = window.setTimeout(() => setCoachOpen(true), 600)
       return () => window.clearTimeout(t)
     }
-  }, [state.setup.coachSeen, state.setup.coachDismissed])
+  }, [state.setup.coachSeen, state.setup.coachDismissed, initial.coach])
 
   function openTab(next: TabId) {
     setTab(next)
+    const view = next === 'more' ? 'hub' : moreView
     if (next === 'more') setMoreView('hub')
+    pushRoute(next, next === 'more' ? 'hub' : view)
   }
 
   function openMore(view: MoreView) {
     setTab('more')
     setMoreView(view)
+    pushRoute('more', view)
   }
 
   function navigate(nextTab: TabId, view?: MoreView) {
     setTab(nextTab)
-    if (nextTab === 'more') setMoreView(view || 'hub')
+    const mv = nextTab === 'more' ? view || 'hub' : 'hub'
+    if (nextTab === 'more') setMoreView(mv)
+    pushRoute(nextTab, mv)
+  }
+
+  function setMore(view: MoreView) {
+    setMoreView(view)
+    pushRoute('more', view)
   }
 
   const moreTitle =
-    moreView === 'hub'
-      ? 'More'
-      : moreView.charAt(0).toUpperCase() + moreView.slice(1)
+    moreView === 'hub' ? 'More' : moreView.charAt(0).toUpperCase() + moreView.slice(1)
 
   return (
     <>
@@ -80,7 +103,7 @@ export default function App() {
         {tab === 'more' ? (
           <MoreScreen
             view={moreView}
-            onView={setMoreView}
+            onView={setMore}
             onOpenCoach={() => setCoachOpen(true)}
           />
         ) : null}

@@ -1,1 +1,8 @@
 /*    /index.html   200
+/t/*  /index.html   200
+/more /index.html   200
+/more/* /index.html 200
+/chat /index.html   200
+/tasks /index.html  200
+/brain /index.html  200
+/home /index.html   200

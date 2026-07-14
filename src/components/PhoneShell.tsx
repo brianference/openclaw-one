@@ -126,13 +126,38 @@ export function PhoneShell({
         <main id="phone-main" className="body" tabIndex={-1}>
           {children}
         </main>
-        <nav className="tabbar" aria-label="Primary">
+        <nav
+          className="tabbar"
+          aria-label="Primary"
+          onKeyDown={(e) => {
+            const idx = TABS.findIndex((t) => t.id === tab)
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+              e.preventDefault()
+              onTabChange(TABS[(idx + 1) % TABS.length].id)
+            }
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+              e.preventDefault()
+              onTabChange(TABS[(idx - 1 + TABS.length) % TABS.length].id)
+            }
+            if (e.key === 'Home') {
+              e.preventDefault()
+              onTabChange(TABS[0].id)
+            }
+            if (e.key === 'End') {
+              e.preventDefault()
+              onTabChange(TABS[TABS.length - 1].id)
+            }
+          }}
+        >
           {TABS.map((t) => (
             <button
               key={t.id}
               type="button"
+              role="tab"
               className={`tab${tab === t.id ? ' is-active' : ''}`}
+              aria-selected={tab === t.id}
               aria-current={tab === t.id ? 'page' : undefined}
+              tabIndex={tab === t.id ? 0 : -1}
               onClick={() => onTabChange(t.id)}
             >
               <span className="tab-ico" aria-hidden>
@@ -150,9 +175,23 @@ export function PhoneShell({
           <ul>
             <li>No Supabase keys in the browser</li>
             <li>Vault rejects real-looking secrets</li>
+            <li>Optional WebCrypto vault lock</li>
             <li>Chat redacts credential patterns</li>
             <li>Demo user only (Alex)</li>
-            <li>Data stays in localStorage</li>
+          </ul>
+        </div>
+        <div className="desktop-card">
+          <h3>Deep links</h3>
+          <ul>
+            <li>
+              <code>/chat</code> · <code>/tasks</code>
+            </li>
+            <li>
+              <code>/t/vault</code> · <code>/t/kanban</code>
+            </li>
+            <li>
+              <code>/?coach=1</code> opens setup coach
+            </li>
           </ul>
         </div>
         <div className="desktop-card">

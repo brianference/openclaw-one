@@ -446,6 +446,29 @@ export function markAutoConfigured(): void {
   patchSetup({ autoConfiguredAt: new Date().toISOString(), coachSeen: true })
 }
 
+/** Export vault array as JSON for WebCrypto lock. */
+export function exportVaultJson(): string {
+  return JSON.stringify(state.vault)
+}
+
+/** Replace vault items after unlock (demo values only). */
+export function importVaultJson(json: string): void {
+  try {
+    const parsed = JSON.parse(json) as DemoState['vault']
+    if (!Array.isArray(parsed)) return
+    state = { ...state, vault: parsed }
+    persist()
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Clear vault items while ciphertext remains on disk. */
+export function clearVaultMemory(): void {
+  state = { ...state, vault: [] }
+  persist()
+}
+
 /** Imperative API used by the 300-simulation harness. */
 export const demoApi = {
   getState,
