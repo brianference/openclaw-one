@@ -1,34 +1,48 @@
-/** Theme persistence for light/dark mode (`data-theme` on documentElement). */
-const STORAGE_KEY = 'portfolio-theme'
+import type { DesignOption, ThemeMode } from './data/seed'
+import { getState, setDesign, setThemeMode } from './lib/store'
 
-export type Theme = 'light' | 'dark'
-
-/** Read saved theme or default to dark. */
-export function getTheme(): Theme {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    if (saved === 'light' || saved === 'dark') return saved
-  } catch {
-    /* private mode */
-  }
-  return 'dark'
+/** Apply design option + light/dark to documentElement. */
+export function applyChrome(design: DesignOption, mode: ThemeMode): void {
+  const root = document.documentElement
+  root.setAttribute('data-design', design)
+  root.setAttribute('data-theme', mode)
 }
 
-/** Apply theme before React paints consumers. */
-export function initTheme(): Theme {
-  const theme = getTheme()
-  document.documentElement.setAttribute('data-theme', theme)
-  return theme
+export function initTheme(): { design: DesignOption; mode: ThemeMode } {
+  const { design, themeMode } = getState()
+  applyChrome(design, themeMode)
+  return { design, mode: themeMode }
 }
 
-/** Flip and persist theme. */
-export function toggleTheme(): Theme {
-  const next: Theme = getTheme() === 'dark' ? 'light' : 'dark'
-  document.documentElement.setAttribute('data-theme', next)
-  try {
-    localStorage.setItem(STORAGE_KEY, next)
-  } catch {
-    /* ignore */
-  }
+export function toggleTheme(): ThemeMode {
+  const next: ThemeMode = getState().themeMode === 'dark' ? 'light' : 'dark'
+  setThemeMode(next)
+  applyChrome(getState().design, next)
   return next
+}
+
+export function chooseDesign(design: DesignOption): void {
+  setDesign(design)
+  applyChrome(design, getState().themeMode)
+}
+
+export const DESIGN_META: Record<
+  DesignOption,
+  { name: string; tagline: string; blurb: string }
+> = {
+  liquid: {
+    name: 'Liquid Glass',
+    tagline: 'iOS-inspired frosted glass',
+    blurb: 'Large titles, soft blur surfaces, system blue, airy spacing.',
+  },
+  oled: {
+    name: 'Deep OLED',
+    tagline: 'True black utility',
+    blurb: 'Dense cards, high contrast, electric accents for power users.',
+  },
+  aurora: {
+    name: 'Soft Aurora',
+    tagline: 'Gradient calm',
+    blurb: 'Layered color washes, pill chips, rounded editorial cards.',
+  },
 }
