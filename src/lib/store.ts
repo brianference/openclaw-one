@@ -2,7 +2,14 @@
  * Local-only demo store (localStorage). No Supabase, no real auth, no secret sync.
  */
 
-import { createSeedState, type DemoState, type DesignOption, type ThemeMode } from '../data/seed'
+import {
+  createSeedState,
+  DEFAULT_SETUP,
+  type DemoState,
+  type DesignOption,
+  type SetupPrefs,
+  type ThemeMode,
+} from '../data/seed'
 import { isLikelyRealSecret, redactSecrets } from './security'
 
 const STORAGE_KEY = 'mobileclaw-public-demo-v2'
@@ -12,13 +19,24 @@ type Listener = () => void
 let state: DemoState = load()
 const listeners = new Set<Listener>()
 
+function migrate(raw: Partial<DemoState> & { version?: number }): DemoState {
+  const base = createSeedState()
+  if (!raw || (raw.version !== 2 && raw.version !== 3)) return base
+  return {
+    ...base,
+    ...raw,
+    version: 3,
+    setup: { ...DEFAULT_SETUP, ...(raw.setup || {}) },
+    user: { ...base.user, ...(raw.user || {}) },
+    connection: { ...base.connection, ...(raw.connection || {}) },
+  }
+}
+
 function load(): DemoState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return createSeedState()
-    const parsed = JSON.parse(raw) as DemoState
-    if (parsed?.version !== 2) return createSeedState()
-    return parsed
+    return migrate(JSON.parse(raw) as Partial<DemoState>)
   } catch {
     return createSeedState()
   }
@@ -415,6 +433,19 @@ export function setTier(tier: DemoState['user']['tier']): void {
   persist()
 }
 
+/** Patch setup-coach preferences. */
+export function patchSetup(partial: Partial<SetupPrefs>): void {
+  state = {
+    ...state,
+    setup: { ...state.setup, ...partial },
+  }
+  persist()
+}
+
+export function markAutoConfigured(): void {
+  patchSetup({ autoConfiguredAt: new Date().toISOString(), coachSeen: true })
+}
+
 /** Imperative API used by the 300-simulation harness. */
 export const demoApi = {
   getState,
@@ -441,4 +472,6 @@ export const demoApi = {
   setDesign,
   setThemeMode,
   setTabMeta,
+  patchSetup,
+  markAutoConfigured,
 }

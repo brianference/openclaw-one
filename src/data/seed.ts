@@ -144,8 +144,16 @@ export type ChatMessage = {
   status?: 'sent' | 'failed'
 }
 
+export type SetupPrefs = {
+  walkthroughCompleted: boolean
+  coachDismissed: boolean
+  coachSeen: boolean
+  lastStepIndex: number
+  autoConfiguredAt: string | null
+}
+
 export type DemoState = {
-  version: 2
+  version: 3
   user: typeof PUBLIC_DEMO_USER
   tasks: Task[]
   notes: Note[]
@@ -172,6 +180,15 @@ export type DemoState = {
   design: DesignOption
   artHistory: { id: string; prompt: string; createdAt: string }[]
   phoneBookings: { id: string; venue: string; partySize: number; when: string; status: string }[]
+  setup: SetupPrefs
+}
+
+export const DEFAULT_SETUP: SetupPrefs = {
+  walkthroughCompleted: false,
+  coachDismissed: false,
+  coachSeen: false,
+  lastStepIndex: 0,
+  autoConfiguredAt: null,
 }
 
 const now = () => new Date().toISOString()
@@ -230,7 +247,7 @@ export const BUILTIN_PERSONAS: Persona[] = [
 export function createSeedState(): DemoState {
   const c1 = 'conv-1'
   return {
-    version: 2,
+    version: 3,
     user: { ...PUBLIC_DEMO_USER },
     tasks: [
       {
@@ -513,6 +530,7 @@ export function createSeedState(): DemoState {
         status: 'confirmed (demo)',
       },
     ],
+    setup: { ...DEFAULT_SETUP },
   }
 }
 

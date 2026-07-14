@@ -25,6 +25,7 @@ export type PhoneShellProps = {
   onTabChange: (tab: TabId) => void
   onToggleTheme: () => void
   onOpenDesign: () => void
+  onOpenCoach?: () => void
   themeMode: ThemeMode
   design: DesignOption
   children: ReactNode
@@ -39,6 +40,7 @@ export function PhoneShell({
   onTabChange,
   onToggleTheme,
   onOpenDesign,
+  onOpenCoach,
   themeMode,
   design,
   children,
@@ -76,6 +78,23 @@ export function PhoneShell({
           <button type="button" className="btn" style={{ marginTop: 12, width: '100%' }} onClick={onOpenDesign}>
             Compare 3 designs
           </button>
+          {onOpenCoach ? (
+            <button
+              type="button"
+              className="btn btn-ghost"
+              style={{ marginTop: 8, width: '100%' }}
+              onClick={onOpenCoach}
+            >
+              Open setup coach
+            </button>
+          ) : null}
+        </div>
+        <div className="desktop-card">
+          <h3>Feature guide</h3>
+          <p>
+            Full docs live in the repo at <code>docs/FEATURES.md</code>. The setup coach can also walk
+            you through every surface.
+          </p>
         </div>
       </aside>
 
@@ -86,6 +105,11 @@ export function PhoneShell({
         <header className="topbar">
           <h1>{title || TITLES[tab]}</h1>
           <div className="top-actions">
+            {onOpenCoach ? (
+              <button type="button" className="icon-btn" aria-label="Setup coach" onClick={onOpenCoach}>
+                ✨
+              </button>
+            ) : null}
             <button type="button" className="icon-btn" aria-label="Design options" onClick={onOpenDesign}>
               🎨
             </button>

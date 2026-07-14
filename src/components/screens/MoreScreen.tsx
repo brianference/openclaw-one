@@ -25,6 +25,7 @@ import type { ColumnId, DesignOption } from '../../data/seed'
 export type MoreScreenProps = {
   view: MoreView
   onView: (view: MoreView) => void
+  onOpenCoach?: () => void
 }
 
 const HUB: { view: MoreView; icon: string; title: string; sub: string }[] = [
@@ -45,7 +46,7 @@ const HUB: { view: MoreView; icon: string; title: string; sub: string }[] = [
 /**
  * More hub + secondary MobileClaw surfaces.
  */
-export function MoreScreen({ view, onView }: MoreScreenProps) {
+export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
   const s = useDemoStore()
   const [err, setErr] = useState<string | null>(null)
   const [revealId, setRevealId] = useState<string | null>(null)
@@ -63,6 +64,18 @@ export function MoreScreen({ view, onView }: MoreScreenProps) {
         <p className="sub">
           {s.user.displayName} · {s.user.email}
         </p>
+        {onOpenCoach ? (
+          <button type="button" className="banner" onClick={onOpenCoach} style={{ width: 'calc(100% - 32px)', cursor: 'pointer', border: 'var(--hairline)', background: 'var(--surface)' }}>
+            <span aria-hidden>✨</span>
+            <div style={{ flex: 1, textAlign: 'left' }}>
+              <p className="row-title" style={{ margin: 0 }}>
+                Setup coach
+              </p>
+              <p className="row-sub">Tour, auto-configure, and feature Q&A</p>
+            </div>
+            <span className="chev">›</span>
+          </button>
+        ) : null}
         <div className="card">
           {HUB.map((item) => (
             <button key={item.view} type="button" className="row" onClick={() => onView(item.view)}>

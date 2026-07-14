@@ -4,6 +4,7 @@ import type { MoreView, TabId } from '../../data/seed'
 export type HomeScreenProps = {
   onOpenTab: (tab: TabId) => void
   onOpenMore: (view: MoreView) => void
+  onOpenCoach?: () => void
 }
 
 function greeting(): string {
@@ -16,7 +17,7 @@ function greeting(): string {
 /**
  * MobileClaw Home — greeting, plan, quick actions, stats, feature grid.
  */
-export function HomeScreen({ onOpenTab, onOpenMore }: HomeScreenProps) {
+export function HomeScreen({ onOpenTab, onOpenMore, onOpenCoach }: HomeScreenProps) {
   const s = useDemoStore()
   const openTasks = s.tasks.filter((t) => !t.completed).length
 
@@ -28,6 +29,26 @@ export function HomeScreen({ onOpenTab, onOpenMore }: HomeScreenProps) {
         {s.user.displayName}
       </p>
       <p className="sub">Public MobileClaw demo · local data only</p>
+
+      {onOpenCoach ? (
+        <button
+          type="button"
+          className="banner"
+          style={{ marginBottom: 12, width: 'calc(100% - 32px)', cursor: 'pointer' }}
+          onClick={onOpenCoach}
+        >
+          <span aria-hidden>✨</span>
+          <div style={{ flex: 1, textAlign: 'left' }}>
+            <p className="row-title" style={{ margin: 0 }}>
+              New here?
+            </p>
+            <p className="row-sub">Tour · auto-configure · feature Q&A</p>
+          </div>
+          <span className="pill" style={{ pointerEvents: 'none' }}>
+            Coach
+          </span>
+        </button>
+      ) : null}
 
       <div className="banner">
         <span aria-hidden>💎</span>
