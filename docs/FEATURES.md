@@ -93,15 +93,18 @@ Commands the coach understands (examples):
 
 ---
 
-## Design systems
+## Look & buttons
 
-| ID | Name | Character |
-|----|------|-----------|
-| `liquid` | Liquid Glass | iOS frost, system blue (default) |
-| `oled` | Deep OLED | True black, dense utility |
-| `aurora` | Soft Aurora | Indigo/violet gradients |
+| Setting | Value |
+|---------|--------|
+| Structure | Deep OLED (dense utility chrome) |
+| Dark mode | Soft Aurora night palette (`#0b1020`, indigo primary) |
+| Light mode | Crisp OLED utility light |
+| Buttons A | **Solid fill** (default) |
+| Buttons B | **Soft tint** |
+| Buttons C | **Outline glow** |
 
-Compare: https://openclaw-one.pages.dev/design-options.html  
+Change buttons in **More → Appearance** (not primary nav). Theme toggle is sun/moon only.
 
 ---
 

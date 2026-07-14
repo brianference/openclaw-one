@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test:sim": "node scripts/simulations.mjs"
+    "test:sim": "node scripts/simulations.mjs",
+    "test:deep": "node scripts/deep-test.mjs",
+    "test:ui": "node scripts/ui-matrix.mjs",
+    "test:all": "npm run test:sim && npm run test:deep && npm run test:ui"
   },
   "dependencies": {
     "react": "^18.3.1",

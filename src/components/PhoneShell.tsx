@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
-import type { TabId } from '../data/seed'
-import { DESIGN_META } from '../theme'
-import type { DesignOption, ThemeMode } from '../data/seed'
+import type { ButtonStyle, TabId } from '../data/seed'
+import { BUTTON_META, DESIGN_META } from '../theme'
+import type { ThemeMode } from '../data/seed'
 
 const TABS: { id: TabId; label: string; icon: string }[] = [
   { id: 'home', label: 'Home', icon: '⌂' },
@@ -24,28 +24,29 @@ export type PhoneShellProps = {
   title?: string
   onTabChange: (tab: TabId) => void
   onToggleTheme: () => void
-  onOpenDesign: () => void
   onOpenCoach?: () => void
+  onOpenAppearance?: () => void
   themeMode: ThemeMode
-  design: DesignOption
+  buttonStyle: ButtonStyle
   children: ReactNode
 }
 
 /**
- * iPhone-style chrome + desktop side rails for feature map and design summary.
+ * iPhone-style chrome + desktop rails. No design-compare in primary nav.
  */
 export function PhoneShell({
   tab,
   title,
   onTabChange,
   onToggleTheme,
-  onOpenDesign,
   onOpenCoach,
+  onOpenAppearance,
   themeMode,
-  design,
+  buttonStyle,
   children,
 }: PhoneShellProps) {
-  const meta = DESIGN_META[design]
+  const look = DESIGN_META.oled
+  const btn = BUTTON_META[buttonStyle]
 
   return (
     <div className="app-frame">
@@ -59,41 +60,48 @@ export function PhoneShell({
           <p>Public web demo of the native app — anonymized data, no real secrets.</p>
         </div>
         <div className="desktop-card">
-          <h3>Included surfaces</h3>
+          <h3>Surfaces</h3>
           <ul>
             <li>Home, Chat, Tasks, Brain</li>
-            <li>Kanban, Ideas, Trips</li>
-            <li>Vault (demo values only)</li>
+            <li>Kanban, Ideas, Trips, Vault</li>
             <li>Agents, Logs, Personas</li>
-            <li>AI Art & phone booking (mock)</li>
-            <li>Paywall & connection UI</li>
+            <li>Setup coach · PWA offline shell</li>
           </ul>
         </div>
         <div className="desktop-card">
-          <h3>Active design</h3>
+          <h3>Look</h3>
           <p>
-            <strong>{meta.name}</strong> — {meta.tagline}
+            <strong>{look.name}</strong>
           </p>
-          <p style={{ marginTop: 8 }}>{meta.blurb}</p>
-          <button type="button" className="btn" style={{ marginTop: 12, width: '100%' }} onClick={onOpenDesign}>
-            Compare 3 designs
-          </button>
-          {onOpenCoach ? (
+          <p style={{ marginTop: 6 }}>{look.blurb}</p>
+          <p style={{ marginTop: 10 }}>
+            Buttons: <strong>{btn.name}</strong> — {btn.tagline}
+          </p>
+          {onOpenAppearance ? (
             <button
               type="button"
               className="btn btn-ghost"
+              style={{ marginTop: 12, width: '100%' }}
+              onClick={onOpenAppearance}
+            >
+              Button styles
+            </button>
+          ) : null}
+          {onOpenCoach ? (
+            <button
+              type="button"
+              className="btn"
               style={{ marginTop: 8, width: '100%' }}
               onClick={onOpenCoach}
             >
-              Open setup coach
+              Setup coach
             </button>
           ) : null}
         </div>
         <div className="desktop-card">
           <h3>Feature guide</h3>
           <p>
-            Full docs live in the repo at <code>docs/FEATURES.md</code>. The setup coach can also walk
-            you through every surface.
+            See <code>docs/FEATURES.md</code> or ask the setup coach.
           </p>
         </div>
       </aside>
@@ -110,9 +118,6 @@ export function PhoneShell({
                 ✨
               </button>
             ) : null}
-            <button type="button" className="icon-btn" aria-label="Design options" onClick={onOpenDesign}>
-              🎨
-            </button>
             <button
               type="button"
               className="icon-btn"
@@ -129,6 +134,7 @@ export function PhoneShell({
         <nav
           className="tabbar"
           aria-label="Primary"
+          role="tablist"
           onKeyDown={(e) => {
             const idx = TABS.findIndex((t) => t.id === tab)
             if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
@@ -177,7 +183,6 @@ export function PhoneShell({
             <li>Vault rejects real-looking secrets</li>
             <li>Optional WebCrypto vault lock</li>
             <li>Chat redacts credential patterns</li>
-            <li>Demo user only (Alex)</li>
           </ul>
         </div>
         <div className="desktop-card">
@@ -187,22 +192,12 @@ export function PhoneShell({
               <code>/chat</code> · <code>/tasks</code>
             </li>
             <li>
-              <code>/t/vault</code> · <code>/t/kanban</code>
+              <code>/t/vault</code> · <code>/t/appearance</code>
             </li>
             <li>
-              <code>/?coach=1</code> opens setup coach
+              <code>/?coach=1</code>
             </li>
           </ul>
-        </div>
-        <div className="desktop-card">
-          <h3>Native source</h3>
-          <p>
-            Feature parity with{' '}
-            <a href="https://github.com/brianference/mobileclaw" target="_blank" rel="noreferrer">
-              mobileclaw
-            </a>
-            , adapted for a public product site.
-          </p>
         </div>
       </aside>
     </div>

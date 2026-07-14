@@ -19,7 +19,7 @@ const MORE: MoreView[] = [
   'phone',
   'paywall',
   'connection',
-  'design',
+  'appearance',
 ]
 
 export type RouteState = {
@@ -39,6 +39,9 @@ export function parseLocation(pathname = window.location.pathname, search = wind
     const key = short[1].toLowerCase()
     if ((TABS as string[]).includes(key) && key !== 'more') {
       return { tab: key as TabId, moreView: 'hub', coach }
+    }
+    if (key === 'design') {
+      return { tab: 'more', moreView: 'appearance', coach }
     }
     if ((MORE as string[]).includes(key)) {
       return { tab: 'more', moreView: key as MoreView, coach }

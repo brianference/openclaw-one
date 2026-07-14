@@ -14,13 +14,14 @@ import {
   getState,
   markAutoConfigured,
   pingAgent,
+  setButtonStyle,
   setConnection,
   setDesign,
   setTabMeta,
   setThemeMode,
   setTier,
 } from './store'
-import { applyChrome } from '../theme'
+import { applyChrome, chooseButtonStyle } from '../theme'
 import { SAFE_DEMO_ENDPOINTS } from './security'
 
 export type NavTarget = { tab: TabId; moreView?: MoreView }
@@ -82,10 +83,10 @@ export const WALKTHROUGH: WalkStep[] = [
     nav: { tab: 'more', moreView: 'agents' },
   },
   {
-    id: 'design',
-    title: 'Design systems',
-    body: 'Pick Liquid Glass (iOS frost), Deep OLED (true black), or Soft Aurora (gradients). Light/dark works with each. Use the palette button anytime.',
-    nav: { tab: 'more', moreView: 'design' },
+    id: 'appearance',
+    title: 'Appearance & buttons',
+    body: 'Look is Deep OLED with Soft Aurora night colors. Choose button group A Solid, B Soft, or C Glow under More → Appearance. Theme toggle is sun/moon only.',
+    nav: { tab: 'more', moreView: 'appearance' },
   },
   {
     id: 'connection',
@@ -110,10 +111,11 @@ export type AutoConfigResult = {
 export function autoConfigureEverything(): AutoConfigResult {
   const applied: string[] = []
 
-  setDesign('liquid')
+  setDesign('oled')
   setThemeMode('dark')
-  applyChrome('liquid', 'dark')
-  applied.push('Design → Liquid Glass (dark)')
+  setButtonStyle('solid')
+  applyChrome('oled', 'dark', 'solid')
+  applied.push('Look → Deep OLED + Aurora dark · buttons Solid')
 
   setTier('pro')
   applied.push('Plan → Pro (demo credits)')
@@ -205,39 +207,42 @@ export function answerSetupLocally(userText: string): CoachReply {
     }
   }
 
-  if (/\b(liquid|glass)\b/.test(q) && /\b(design|theme|look|style)\b/.test(q)) {
-    setDesign('liquid')
-    applyChrome('liquid', getState().themeMode)
-    actions.push({ type: 'set-design', design: 'liquid' })
-    actions.push({ type: 'navigate', nav: { tab: 'more', moreView: 'design' } })
-    return { text: 'Applied **Liquid Glass** — iOS-style frost and system blue.', actions }
+  if (/\b(solid|fill)\b/.test(q) && /\b(button|btn|cta)\b/.test(q)) {
+    chooseButtonStyle('solid')
+    actions.push({ type: 'navigate', nav: { tab: 'more', moreView: 'appearance' } })
+    return { text: 'Applied **Solid fill** buttons (group A).', actions }
   }
-  if (/\b(oled|deep\s*black|true\s*black)\b/.test(q)) {
+  if (/\b(soft|tint|glass)\b/.test(q) && /\b(button|btn|cta)\b/.test(q)) {
+    chooseButtonStyle('soft')
+    actions.push({ type: 'navigate', nav: { tab: 'more', moreView: 'appearance' } })
+    return { text: 'Applied **Soft tint** buttons (group B).', actions }
+  }
+  if (/\b(glow|outline|neon)\b/.test(q) && /\b(button|btn|cta|look)\b/.test(q)) {
+    chooseButtonStyle('glow')
+    actions.push({ type: 'navigate', nav: { tab: 'more', moreView: 'appearance' } })
+    return { text: 'Applied **Outline glow** buttons (group C).', actions }
+  }
+  if (/\b(oled|aurora|liquid|design)\b/.test(q)) {
     setDesign('oled')
-    applyChrome('oled', getState().themeMode)
-    actions.push({ type: 'set-design', design: 'oled' })
-    actions.push({ type: 'navigate', nav: { tab: 'more', moreView: 'design' } })
-    return { text: 'Applied **Deep OLED** — true black utility look.', actions }
-  }
-  if (/\b(aurora|gradient|soft\s*aurora)\b/.test(q)) {
-    setDesign('aurora')
-    applyChrome('aurora', getState().themeMode)
-    actions.push({ type: 'set-design', design: 'aurora' })
-    actions.push({ type: 'navigate', nav: { tab: 'more', moreView: 'design' } })
-    return { text: 'Applied **Soft Aurora** — indigo gradients and calm cards.', actions }
+    applyChrome('oled', getState().themeMode, getState().buttonStyle)
+    actions.push({ type: 'navigate', nav: { tab: 'more', moreView: 'appearance' } })
+    return {
+      text: 'Product look is locked to **Deep OLED + Soft Aurora dark**. Open Appearance to pick button groups A/B/C.',
+      actions,
+    }
   }
 
   if (/\b(light\s*mode|day\s*mode)\b/.test(q)) {
     setThemeMode('light')
-    applyChrome(getState().design, 'light')
+    applyChrome('oled', 'light', getState().buttonStyle)
     actions.push({ type: 'set-theme', mode: 'light' })
     return { text: 'Switched to **light** mode.', actions }
   }
   if (/\b(dark\s*mode|night\s*mode)\b/.test(q)) {
     setThemeMode('dark')
-    applyChrome(getState().design, 'dark')
+    applyChrome('oled', 'dark', getState().buttonStyle)
     actions.push({ type: 'set-theme', mode: 'dark' })
-    return { text: 'Switched to **dark** mode.', actions }
+    return { text: 'Switched to **dark** (Aurora night) mode.', actions }
   }
 
   // Open feature by name

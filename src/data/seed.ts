@@ -5,7 +5,10 @@
 
 import { PUBLIC_DEMO_USER, SAFE_DEMO_ENDPOINTS } from '../lib/security'
 
-export type DesignOption = 'liquid' | 'oled' | 'aurora'
+/** Locked product look: Deep OLED structure; dark colors = Soft Aurora. */
+export type DesignOption = 'oled'
+/** Three button systems the user can pick in Appearance. */
+export type ButtonStyle = 'solid' | 'soft' | 'glow'
 export type ThemeMode = 'light' | 'dark'
 export type TabId = 'home' | 'chat' | 'tasks' | 'brain' | 'more'
 export type MoreView =
@@ -21,7 +24,7 @@ export type MoreView =
   | 'phone'
   | 'paywall'
   | 'connection'
-  | 'design'
+  | 'appearance'
 
 export type TaskCategory = 'work' | 'personal' | 'shopping'
 export type NoteCategory = 'idea' | 'note' | 'todo' | 'research'
@@ -178,6 +181,7 @@ export type DemoState = {
   }
   themeMode: ThemeMode
   design: DesignOption
+  buttonStyle: ButtonStyle
   artHistory: { id: string; prompt: string; createdAt: string }[]
   phoneBookings: { id: string; venue: string; partySize: number; when: string; status: string }[]
   setup: SetupPrefs
@@ -513,7 +517,8 @@ export function createSeedState(): DemoState {
       url: SAFE_DEMO_ENDPOINTS.local,
     },
     themeMode: 'dark',
-    design: 'liquid',
+    design: 'oled',
+    buttonStyle: 'solid',
     artHistory: [
       {
         id: 'art1',

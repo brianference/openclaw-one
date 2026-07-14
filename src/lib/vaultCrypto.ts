@@ -12,8 +12,7 @@ export type VaultCryptoMeta = {
   unlocked: boolean
 }
 
-function b64(buf: ArrayBuffer | Uint8Array): string {
-  const bytes = buf instanceof Uint8Array ? buf : new Uint8Array(buf)
+function b64(bytes: Uint8Array): string {
   let s = ''
   bytes.forEach((b) => {
     s += String.fromCharCode(b)
@@ -28,13 +27,20 @@ function fromB64(s: string): Uint8Array {
   return out
 }
 
-async function deriveKey(passphrase: string, salt: Uint8Array): Promise<CryptoKey> {
+/** Copy into a fresh ArrayBuffer-backed view for WebCrypto typing. */
+function asBufferSource(bytes: Uint8Array): ArrayBuffer {
+  const copy = new Uint8Array(bytes.byteLength)
+  copy.set(bytes)
+  return copy.buffer
+}
+
+async function deriveKey(passphrase: string, saltBytes: Uint8Array): Promise<CryptoKey> {
   const enc = new TextEncoder()
   const base = await crypto.subtle.importKey('raw', enc.encode(passphrase), 'PBKDF2', false, [
     'deriveKey',
   ])
   return crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt, iterations: 120_000, hash: 'SHA-256' },
+    { name: 'PBKDF2', salt: asBufferSource(saltBytes), iterations: 120_000, hash: 'SHA-256' },
     base,
     { name: 'AES-GCM', length: 256 },
     false,
@@ -65,11 +71,15 @@ export async function lockVaultPayload(passphrase: string, plaintextJson: string
   const iv = crypto.getRandomValues(new Uint8Array(12))
   const key = await deriveKey(passphrase, salt)
   const enc = new TextEncoder()
-  const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(plaintextJson))
+  const ciphertext = await crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv: asBufferSource(iv) },
+    key,
+    enc.encode(plaintextJson),
+  )
   const meta: VaultCryptoMeta = {
     salt: b64(salt),
     iv: b64(iv),
-    ciphertext: b64(ciphertext),
+    ciphertext: b64(new Uint8Array(ciphertext)),
     unlocked: false,
   }
   localStorage.setItem(META_KEY, JSON.stringify(meta))
@@ -81,9 +91,9 @@ export async function unlockVaultPayload(passphrase: string): Promise<string> {
   if (!meta) throw new Error('No locked vault')
   const key = await deriveKey(passphrase, fromB64(meta.salt))
   const plain = await crypto.subtle.decrypt(
-    { name: 'AES-GCM', iv: fromB64(meta.iv) },
+    { name: 'AES-GCM', iv: asBufferSource(fromB64(meta.iv)) },
     key,
-    fromB64(meta.ciphertext),
+    asBufferSource(fromB64(meta.ciphertext)),
   )
   const text = new TextDecoder().decode(plain)
   localStorage.setItem(META_KEY, JSON.stringify({ ...meta, unlocked: true }))

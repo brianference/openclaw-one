@@ -142,12 +142,12 @@ export const FEATURE_CATALOG: FeatureEntry[] = [
     navigate: { tab: 'more', moreView: 'connection' },
   },
   {
-    id: 'design',
-    name: 'Design options',
+    id: 'appearance',
+    name: 'Appearance',
     area: 'more',
-    summary: 'Three iPhone-modern visual systems plus light/dark.',
-    howTo: 'Tap the palette button or More → Design. Choose Liquid Glass, Deep OLED, or Soft Aurora.',
-    navigate: { tab: 'more', moreView: 'design' },
+    summary: 'Deep OLED + Aurora dark look; three button systems (solid, soft, glow).',
+    howTo: 'More → Appearance. Pick button group A/B/C. Use sun/moon for light/dark.',
+    navigate: { tab: 'more', moreView: 'appearance' },
   },
   {
     id: 'setup-coach',

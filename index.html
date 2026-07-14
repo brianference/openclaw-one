@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-design="liquid" data-theme="dark">
+<html lang="en" data-design="oled" data-theme="dark" data-btn="solid">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -7,7 +7,7 @@
       name="description"
       content="MobileClaw public demo: chat, tasks, brain, kanban, trips, vault, agents — anonymized, no real secrets."
     />
-    <meta name="theme-color" content="#0a84ff" />
+    <meta name="theme-color" content="#0b1020" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="manifest" href="/manifest.webmanifest" />
@@ -16,7 +16,7 @@
     <meta property="og:title" content="MobileClaw — public demo" />
     <meta
       property="og:description"
-      content="iPhone-modern web demo of MobileClaw with three design systems. Local-only data."
+      content="Deep OLED + Aurora night MobileClaw demo. Local-only, no secrets."
     />
     <meta property="og:url" content="https://openclaw-one.pages.dev" />
     <title>MobileClaw — public demo</title>
@@ -29,15 +29,18 @@
     <script>
       try {
         var raw = localStorage.getItem('mobileclaw-public-demo-v2')
-        var design = 'liquid'
         var mode = 'dark'
+        var btn = 'solid'
         if (raw) {
           var parsed = JSON.parse(raw)
-          if (parsed.design) design = parsed.design
           if (parsed.themeMode) mode = parsed.themeMode
+          if (parsed.buttonStyle === 'soft' || parsed.buttonStyle === 'glow' || parsed.buttonStyle === 'solid') {
+            btn = parsed.buttonStyle
+          }
         }
-        document.documentElement.setAttribute('data-design', design)
+        document.documentElement.setAttribute('data-design', 'oled')
         document.documentElement.setAttribute('data-theme', mode)
+        document.documentElement.setAttribute('data-btn', btn)
       } catch (e) {}
     </script>
   </head>

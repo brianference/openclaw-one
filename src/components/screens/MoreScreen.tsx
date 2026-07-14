@@ -1,7 +1,8 @@
 import { useEffect, useState, type DragEvent, type ReactNode } from 'react'
 import type { MoreView, VaultCategory } from '../../data/seed'
 import { TIER_INFO } from '../../data/seed'
-import { DESIGN_META, chooseDesign } from '../../theme'
+import { BUTTON_META, chooseButtonStyle } from '../../theme'
+import type { ButtonStyle } from '../../data/seed'
 import {
   addAgent,
   addArtPrompt,
@@ -23,7 +24,7 @@ import {
 } from '../../lib/store'
 import { useDemoStore } from '../../lib/useDemoStore'
 import { maskSecret } from '../../lib/security'
-import type { ColumnId, DesignOption } from '../../data/seed'
+import type { ColumnId } from '../../data/seed'
 import { Modal } from '../ui/Modal'
 import { useToast } from '../ui/Toast'
 import {
@@ -52,7 +53,7 @@ const HUB: { view: MoreView; icon: string; title: string; sub: string }[] = [
   { view: 'phone', icon: '📞', title: 'Phone booking', sub: 'Mock reservation' },
   { view: 'paywall', icon: '💎', title: 'Plans', sub: 'Subscription UI' },
   { view: 'connection', icon: '🔗', title: 'Connection', sub: 'Safe endpoints' },
-  { view: 'design', icon: '✨', title: 'Design options', sub: '3 iPhone looks' },
+  { view: 'appearance', icon: '🎛️', title: 'Appearance', sub: '3 button systems' },
 ]
 
 type CreateKind = 'kanban' | 'idea' | 'trip' | 'vault' | 'agent' | 'art' | 'phone' | null
@@ -234,29 +235,48 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
     </button>
   )
 
-  if (view === 'design') {
+  if (view === 'appearance') {
+    const styles: ButtonStyle[] = ['solid', 'soft', 'glow']
     return (
       <div className="screen">
         {back}
-        <p className="large-title">Design</p>
-        <p className="sub">Pick one of three iPhone-modern systems</p>
+        <p className="large-title">Appearance</p>
+        <p className="sub">Deep OLED + Aurora dark · pick a button system</p>
+        <div className="card card-pad" style={{ margin: '0 16px 12px' }}>
+          <p className="row-title" style={{ marginTop: 0 }}>
+            Product look
+          </p>
+          <p className="muted">
+            Locked hybrid: OLED structure and Soft Aurora night colors in dark mode. Use the moon/sun
+            control for light/dark only.
+          </p>
+        </div>
+        <p className="section">Button groups</p>
         <div className="design-grid">
-          {(Object.keys(DESIGN_META) as DesignOption[]).map((id) => {
-            const meta = DESIGN_META[id]
+          {styles.map((id) => {
+            const meta = BUTTON_META[id]
             return (
               <button
                 key={id}
                 type="button"
-                className={`design-opt${s.design === id ? ' is-on' : ''}`}
+                className={`design-opt${s.buttonStyle === id ? ' is-on' : ''}`}
                 onClick={() => {
-                  chooseDesign(id)
-                  toast(`${meta.name} applied`)
+                  chooseButtonStyle(id)
+                  toast(`${meta.name} buttons`)
                 }}
               >
-                <strong>{meta.name}</strong>
+                <strong>
+                  {id === 'solid' ? 'A · ' : id === 'soft' ? 'B · ' : 'C · '}
+                  {meta.name}
+                </strong>
                 <span>
                   {meta.tagline}. {meta.blurb}
                 </span>
+                <div className="btn-preview-row" data-btn={id}>
+                  <span className="btn">Primary</span>
+                  <span className="btn-ghost">Ghost</span>
+                  <span className="btn-danger">Danger</span>
+                </div>
               </button>
             )
           })}

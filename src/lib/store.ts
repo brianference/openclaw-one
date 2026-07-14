@@ -5,6 +5,7 @@
 import {
   createSeedState,
   DEFAULT_SETUP,
+  type ButtonStyle,
   type DemoState,
   type DesignOption,
   type SetupPrefs,
@@ -19,13 +20,19 @@ type Listener = () => void
 let state: DemoState = load()
 const listeners = new Set<Listener>()
 
-function migrate(raw: Partial<DemoState> & { version?: number }): DemoState {
+function migrate(raw: Partial<DemoState> & { version?: number; design?: string; buttonStyle?: string }): DemoState {
   const base = createSeedState()
-  if (!raw || (raw.version !== 2 && raw.version !== 3)) return base
+  const ver = Number(raw?.version)
+  if (!raw || (ver !== 2 && ver !== 3)) return base
+  const btn = raw.buttonStyle
+  const buttonStyle: ButtonStyle =
+    btn === 'soft' || btn === 'glow' || btn === 'solid' ? btn : 'solid'
   return {
     ...base,
     ...raw,
     version: 3,
+    design: 'oled',
+    buttonStyle,
     setup: { ...DEFAULT_SETUP, ...(raw.setup || {}) },
     user: { ...base.user, ...(raw.user || {}) },
     connection: { ...base.connection, ...(raw.connection || {}) },
@@ -75,8 +82,13 @@ export function setThemeMode(mode: ThemeMode): void {
   persist()
 }
 
-export function setDesign(design: DesignOption): void {
-  state = { ...state, design }
+export function setDesign(_design: DesignOption): void {
+  state = { ...state, design: 'oled' }
+  persist()
+}
+
+export function setButtonStyle(buttonStyle: ButtonStyle): void {
+  state = { ...state, buttonStyle }
   persist()
 }
 
@@ -105,7 +117,7 @@ export function addTask(title: string, category: DemoState['tasks'][0]['category
     logs: [
       {
         id: uid('l'),
-        level: 'info',
+        level: 'info' as const,
         category: 'tasks',
         message: `Task created: ${clean}`,
         createdAt: new Date().toISOString(),
@@ -253,7 +265,7 @@ export function addVaultItem(name: string, demoValue: string, category: DemoStat
     logs: [
       {
         id: uid('l'),
-        level: 'info',
+        level: 'info' as const,
         category: 'vault',
         message: `Vault item added: ${n}`,
         createdAt: new Date().toISOString(),
@@ -268,6 +280,7 @@ export function addVaultItem(name: string, demoValue: string, category: DemoStat
 export function pingAgent(id: string): void {
   const roll = Math.random()
   const status = roll > 0.7 ? 'error' : roll > 0.35 ? 'online' : 'offline'
+  const level = status === 'error' ? ('error' as const) : ('info' as const)
   state = {
     ...state,
     agents: state.agents.map((a) =>
@@ -278,7 +291,7 @@ export function pingAgent(id: string): void {
     logs: [
       {
         id: uid('l'),
-        level: status === 'error' ? 'error' : 'info',
+        level,
         category: 'agents',
         message: `Ping ${id} → ${status}`,
         createdAt: new Date().toISOString(),
@@ -333,7 +346,7 @@ export function setConnection(enabled: boolean, type: DemoState['connection']['t
     logs: [
       {
         id: uid('l'),
-        level: 'info',
+        level: 'info' as const,
         category: 'connection',
         message: `Connection ${enabled ? 'enabled' : 'disabled'} (${type})`,
         createdAt: new Date().toISOString(),
@@ -493,6 +506,7 @@ export const demoApi = {
   addPhoneBooking,
   setTier,
   setDesign,
+  setButtonStyle,
   setThemeMode,
   setTabMeta,
   patchSetup,

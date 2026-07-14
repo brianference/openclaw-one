@@ -1,48 +1,76 @@
-import type { DesignOption, ThemeMode } from './data/seed'
-import { getState, setDesign, setThemeMode } from './lib/store'
+import type { ButtonStyle, DesignOption, ThemeMode } from './data/seed'
+import { getState, setButtonStyle, setDesign, setThemeMode } from './lib/store'
 
-/** Apply design option + light/dark to documentElement. */
-export function applyChrome(design: DesignOption, mode: ThemeMode): void {
+/**
+ * Apply chrome: hybrid Deep OLED + Soft Aurora dark, plus button system.
+ * data-design is always `oled` (structure); dark tokens = Aurora palette in CSS.
+ */
+export function applyChrome(
+  design: DesignOption = 'oled',
+  mode: ThemeMode = getState().themeMode,
+  buttonStyle: ButtonStyle = getState().buttonStyle,
+): void {
   const root = document.documentElement
-  root.setAttribute('data-design', design)
+  root.setAttribute('data-design', design || 'oled')
   root.setAttribute('data-theme', mode)
+  root.setAttribute('data-btn', buttonStyle || 'solid')
+  // Theme color for PWA / mobile chrome
+  const meta = document.querySelector('meta[name="theme-color"]')
+  if (meta) {
+    meta.setAttribute('content', mode === 'dark' ? '#0b1020' : '#fafafa')
+  }
 }
 
-export function initTheme(): { design: DesignOption; mode: ThemeMode } {
-  const { design, themeMode } = getState()
-  applyChrome(design, themeMode)
-  return { design, mode: themeMode }
+export function initTheme(): { design: DesignOption; mode: ThemeMode; buttonStyle: ButtonStyle } {
+  const { design, themeMode, buttonStyle } = getState()
+  const locked: DesignOption = 'oled'
+  if (design !== 'oled') setDesign(locked)
+  applyChrome(locked, themeMode, buttonStyle)
+  return { design: locked, mode: themeMode, buttonStyle }
 }
 
 export function toggleTheme(): ThemeMode {
   const next: ThemeMode = getState().themeMode === 'dark' ? 'light' : 'dark'
   setThemeMode(next)
-  applyChrome(getState().design, next)
+  applyChrome('oled', next, getState().buttonStyle)
   return next
 }
 
-export function chooseDesign(design: DesignOption): void {
-  setDesign(design)
-  applyChrome(design, getState().themeMode)
+export function chooseDesign(_design: DesignOption): void {
+  setDesign('oled')
+  applyChrome('oled', getState().themeMode, getState().buttonStyle)
 }
 
-export const DESIGN_META: Record<
-  DesignOption,
+export function chooseButtonStyle(style: ButtonStyle): void {
+  setButtonStyle(style)
+  applyChrome('oled', getState().themeMode, style)
+}
+
+export const DESIGN_META = {
+  oled: {
+    name: 'Deep OLED + Aurora night',
+    tagline: 'Utility structure · aurora dark palette',
+    blurb: 'Dense OLED chrome with Soft Aurora colors in dark mode. Light mode stays crisp OLED.',
+  },
+} as const
+
+export const BUTTON_META: Record<
+  ButtonStyle,
   { name: string; tagline: string; blurb: string }
 > = {
-  liquid: {
-    name: 'Liquid Glass',
-    tagline: 'iOS-inspired frosted glass',
-    blurb: 'Large titles, soft blur surfaces, system blue, airy spacing.',
+  solid: {
+    name: 'Solid fill',
+    tagline: 'Bold primary CTAs',
+    blurb: 'Filled primary, subtle ghost, high contrast — best default for mobile thumbs.',
   },
-  oled: {
-    name: 'Deep OLED',
-    tagline: 'True black utility',
-    blurb: 'Dense cards, high contrast, electric accents for power users.',
+  soft: {
+    name: 'Soft tint',
+    tagline: 'Glass / muted chips',
+    blurb: 'Tinted surfaces, lighter weight — calmer secondary actions and toolbars.',
   },
-  aurora: {
-    name: 'Soft Aurora',
-    tagline: 'Gradient calm',
-    blurb: 'Layered color washes, pill chips, rounded editorial cards.',
+  glow: {
+    name: 'Outline glow',
+    tagline: 'Neon edge accents',
+    blurb: 'Transparent fill with luminous border and soft outer glow — agent-ops vibe.',
   },
 }

@@ -26,7 +26,7 @@ Generated after full MobileClaw feature port (public anonymized demo) and 1,021 
 | 5 | Conversation sidebar | **Done** — chat rail on wider phone/desktop |
 | 6 | Optional WebCrypto vault | **Done** — PBKDF2 + AES-GCM local lock |
 | 7 | A11y (tab roving + live toasts) | **Done** |
-| 8 | Visual regression snapshots | Pending — Playwright matrix |
+| 8 | Visual / UI matrix | **Done** — `npm run test:ui` (+ optional PLAYWRIGHT=1) |
 | 9 | Shareable deep links | **Done** — `/chat`, `/t/vault`, `/?coach=1` |
 | 10 | Grounded chat context strip | **Done** |
 

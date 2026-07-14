@@ -26,8 +26,8 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    applyChrome(state.design, state.themeMode)
-  }, [state.design, state.themeMode])
+    applyChrome('oled', state.themeMode, state.buttonStyle)
+  }, [state.themeMode, state.buttonStyle])
 
   // Sync browser history → app
   useEffect(() => {
@@ -85,9 +85,9 @@ export default function App() {
         title={tab === 'more' ? moreTitle : undefined}
         onTabChange={openTab}
         themeMode={state.themeMode}
-        design={state.design}
+        buttonStyle={state.buttonStyle}
         onToggleTheme={() => toggleTheme()}
-        onOpenDesign={() => openMore('design')}
+        onOpenAppearance={() => openMore('appearance')}
         onOpenCoach={() => setCoachOpen(true)}
       >
         {tab === 'home' ? (

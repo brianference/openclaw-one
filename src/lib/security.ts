@@ -42,11 +42,17 @@ export function isLikelyRealSecret(value: string): boolean {
 }
 
 /** Anonymized public identity — no real PII. */
-export const PUBLIC_DEMO_USER = {
+export const PUBLIC_DEMO_USER: {
+  id: string
+  displayName: string
+  email: string
+  tier: 'free' | 'starter' | 'pro' | 'premium'
+  credits: number
+} = {
   id: 'demo-user',
   displayName: 'Alex',
   email: 'demo@openclaw.example',
-  tier: 'pro' as const,
+  tier: 'pro',
   credits: 420,
 }
 
