@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 import type { ButtonStyle, TabId } from '../data/seed'
-import { BUTTON_META, DESIGN_META } from '../theme'
 import type { ThemeMode } from '../data/seed'
 
 const TABS: { id: TabId; label: string; icon: string }[] = [
@@ -42,12 +41,9 @@ export function PhoneShell({
   onOpenCoach,
   onOpenAppearance,
   themeMode,
-  buttonStyle,
+  buttonStyle: _buttonStyle,
   children,
 }: PhoneShellProps) {
-  const look = DESIGN_META.oled
-  const btn = BUTTON_META[buttonStyle]
-
   return (
     <div className="app-frame">
       <a className="skip-link" href="#phone-main">
@@ -69,32 +65,25 @@ export function PhoneShell({
           </ul>
         </div>
         <div className="desktop-card">
-          <h3>Look</h3>
-          <p>
-            <strong>{look.name}</strong>
-          </p>
-          <p style={{ marginTop: 6 }}>{look.blurb}</p>
-          <p style={{ marginTop: 10 }}>
-            Buttons: <strong>{btn.name}</strong> — {btn.tagline}
-          </p>
-          {onOpenAppearance ? (
-            <button
-              type="button"
-              className="btn btn-ghost"
-              style={{ marginTop: 12, width: '100%' }}
-              onClick={onOpenAppearance}
-            >
-              Button styles
-            </button>
-          ) : null}
+          <h3>Tools</h3>
           {onOpenCoach ? (
             <button
               type="button"
               className="btn"
-              style={{ marginTop: 8, width: '100%' }}
+              style={{ width: '100%' }}
               onClick={onOpenCoach}
             >
               Setup coach
+            </button>
+          ) : null}
+          {onOpenAppearance ? (
+            <button
+              type="button"
+              className="btn btn-ghost"
+              style={{ marginTop: 8, width: '100%' }}
+              onClick={onOpenAppearance}
+            >
+              Button styles
             </button>
           ) : null}
         </div>

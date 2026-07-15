@@ -41,7 +41,7 @@ MobileClaw is an AI agent command surface for mobile: chat with personas, tasks,
 | **Phone booking** | Mock table reservations | UI-only |
 | **Plans (paywall)** | Free / Starter / Pro / Premium | Local tier only; no payments |
 | **Connection** | Default / local / cloud endpoint toggle | Safe URLs only; tokens blocked |
-| **Design options** | Liquid Glass / Deep OLED / Soft Aurora × light/dark | Persisted |
+| **Appearance** | Button systems (solid / soft / glow) + light/dark | Persisted |
 | **Setup coach** | AI-guided tour + auto-configure | See “Setup assistant” |
 
 ---
