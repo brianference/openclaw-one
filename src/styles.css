@@ -561,9 +561,14 @@ a { color: var(--primary); }
 .chip {
   border: var(--hairline); background: var(--surface); color: var(--text-dim);
   border-radius: 999px; padding: 8px 12px; font-size: 13px; font-weight: 600;
-  cursor: pointer; white-space: nowrap; min-height: 36px;
+  cursor: pointer; white-space: nowrap; min-height: 44px;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease, border-color 0.15s ease;
 }
+.chip:active { transform: scale(0.97); }
 .chip.is-on { background: var(--primary-soft); color: var(--primary); border-color: transparent; }
+.chip-ico { gap: 6px; }
+.chip-ico svg { flex-shrink: 0; }
 
 .stack { display: flex; flex-direction: column; gap: 8px; padding: 8px 16px 16px; }
 .item {
@@ -571,12 +576,38 @@ a { color: var(--primary); }
   padding: 12px; border-radius: var(--radius-sm);
   background: var(--surface); border: var(--hairline); border-left-width: 3px;
 }
+/* Visual circle 22px; hit box ≥44px (ui-ux-pro-max touch targets) */
 .check {
-  width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border);
+  --check-color: var(--primary);
+  width: 44px; height: 44px; border: none; border-radius: 0;
   flex-shrink: 0; background: transparent; cursor: pointer; color: #fff;
-  display: flex; align-items: center; justify-content: center; margin-top: 1px; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  margin: -11px 0 -11px -11px; padding: 0;
+  position: relative;
+  transition: transform 0.12s ease;
 }
-.check.on { background: var(--primary); border-color: var(--primary); }
+.check::before {
+  content: '';
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid var(--border);
+  background: transparent;
+  box-sizing: border-box;
+}
+.check.on::before {
+  background: var(--check-color);
+  border-color: var(--check-color);
+}
+.check.on { color: #fff; }
+.check svg {
+  position: absolute;
+  z-index: 1;
+}
+.check:active { transform: scale(0.94); }
+.check:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
 .muted { color: var(--text-muted); font-size: 12px; }
 .strike { text-decoration: line-through; color: var(--text-muted); }
 

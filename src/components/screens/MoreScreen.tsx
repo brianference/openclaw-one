@@ -735,6 +735,7 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
               style={{ borderLeftColor: '#8b5cf6', flexDirection: 'column' }}
             >
               <div
+                className="art-placeholder"
                 style={{
                   height: 120,
                   borderRadius: 12,
@@ -742,10 +743,11 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: 40,
+                  color: 'var(--primary)',
                 }}
+                aria-hidden
               >
-                🖼️
+                <Icon name="image" size={36} strokeWidth={1.5} />
               </div>
               <strong>{art.prompt}</strong>
               <span className="muted">{new Date(art.createdAt).toLocaleString()}</span>

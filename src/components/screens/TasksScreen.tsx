@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type CSSProperties } from 'react'
 import { addTask, toggleTask } from '../../lib/store'
 import { useDemoStore } from '../../lib/useDemoStore'
+import { Icon } from '../icons'
 import { Modal } from '../ui/Modal'
 import { useToast } from '../ui/Toast'
 import type { TaskCategory } from '../../data/seed'
@@ -68,9 +69,13 @@ export function TasksScreen() {
                   toggleTask(task.id)
                   toast(task.completed ? 'Marked active' : 'Task completed')
                 }}
-                style={task.completed ? { background: color, borderColor: color } : undefined}
+                style={
+                  task.completed
+                    ? ({ ['--check-color']: color } as CSSProperties)
+                    : undefined
+                }
               >
-                {task.completed ? '✓' : ''}
+                {task.completed ? <Icon name="check" size={12} strokeWidth={2.5} /> : null}
               </button>
               <div>
                 <p className={task.completed ? 'strike' : ''} style={{ margin: 0, fontWeight: 600 }}>

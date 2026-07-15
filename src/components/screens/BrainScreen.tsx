@@ -2,15 +2,24 @@ import { useMemo, useState } from 'react'
 import { addNote, toggleNotePin } from '../../lib/store'
 import { useDemoStore } from '../../lib/useDemoStore'
 import type { NoteCategory } from '../../data/seed'
+import { Icon, type IconName } from '../icons'
 import { Modal } from '../ui/Modal'
 import { useToast } from '../ui/Toast'
 
-const CAT: Record<NoteCategory, { label: string; emoji: string; color: string }> = {
-  idea: { label: 'Idea', emoji: '💡', color: '#f59e0b' },
-  note: { label: 'Note', emoji: '📝', color: '#3b82f6' },
-  todo: { label: 'Todo', emoji: '✅', color: '#22c55e' },
-  research: { label: 'Research', emoji: '🔬', color: '#8b5cf6' },
+const CAT: Record<NoteCategory, { label: string; icon: IconName; color: string }> = {
+  idea: { label: 'Idea', icon: 'idea', color: '#f59e0b' },
+  note: { label: 'Note', icon: 'note', color: '#3b82f6' },
+  todo: { label: 'Todo', icon: 'todo', color: '#22c55e' },
+  research: { label: 'Research', icon: 'research', color: '#8b5cf6' },
 }
+
+const FILTERS: { id: NoteCategory | 'all'; label: string; icon: IconName }[] = [
+  { id: 'all', label: 'All', icon: 'all' },
+  { id: 'idea', label: 'Ideas', icon: 'idea' },
+  { id: 'note', label: 'Notes', icon: 'note' },
+  { id: 'todo', label: 'Todos', icon: 'todo' },
+  { id: 'research', label: 'Research', icon: 'research' },
+]
 
 export function BrainScreen() {
   const s = useDemoStore()
@@ -65,22 +74,17 @@ export function BrainScreen() {
         />
       </div>
 
-      <div className="chips">
-        {(
-          [
-            ['all', '🧠 All'],
-            ['idea', '💡 Ideas'],
-            ['note', '📝 Notes'],
-            ['todo', '✅ Todos'],
-            ['research', '🔬 Research'],
-          ] as const
-        ).map(([id, label]) => (
+      <div className="chips" role="tablist" aria-label="Note categories">
+        {FILTERS.map(({ id, label, icon }) => (
           <button
             key={id}
             type="button"
-            className={`chip${filter === id ? ' is-on' : ''}`}
+            role="tab"
+            aria-selected={filter === id}
+            className={`chip chip-ico${filter === id ? ' is-on' : ''}`}
             onClick={() => setFilter(id)}
           >
+            <Icon name={icon} size={14} strokeWidth={filter === id ? 2.1 : 1.75} />
             {label}
           </button>
         ))}
@@ -99,8 +103,8 @@ export function BrainScreen() {
               style={{ borderLeftColor: cat.color, flexDirection: 'column' }}
             >
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-                <span>{cat.emoji}</span>
-                <span className="chip is-on" style={{ minHeight: 28, padding: '2px 8px' }}>
+                <span className="chip chip-ico is-on" style={{ minHeight: 28, padding: '2px 8px' }}>
+                  <Icon name={cat.icon} size={12} strokeWidth={2} />
                   {cat.label}
                 </span>
                 {note.pinned ? <span className="muted">Pinned</span> : null}
