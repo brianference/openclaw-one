@@ -34,6 +34,7 @@ import {
   markVaultLocked,
   unlockVaultPayload,
 } from '../../lib/vaultCrypto'
+import { HUB_ICONS, Icon, IconBadge } from '../icons'
 
 export type MoreScreenProps = {
   view: MoreView
@@ -41,19 +42,19 @@ export type MoreScreenProps = {
   onOpenCoach?: () => void
 }
 
-const HUB: { view: MoreView; icon: string; title: string; sub: string }[] = [
-  { view: 'kanban', icon: '📋', title: 'Kanban', sub: 'Drag cards between columns' },
-  { view: 'ideas', icon: '💡', title: 'Ideas', sub: 'Capture & cycle status' },
-  { view: 'trips', icon: '✈️', title: 'Trips', sub: 'Itineraries' },
-  { view: 'vault', icon: '🛡️', title: 'Vault', sub: 'Demo secrets + optional lock' },
-  { view: 'agents', icon: '⚡', title: 'Agents', sub: 'Ping simulated fleet' },
-  { view: 'logs', icon: '📜', title: 'Logs', sub: 'Local activity stream' },
-  { view: 'personas', icon: '🎭', title: 'Personas', sub: 'Built-in assistants' },
-  { view: 'art', icon: '🎨', title: 'AI Art', sub: 'Mock generation' },
-  { view: 'phone', icon: '📞', title: 'Phone booking', sub: 'Mock reservation' },
-  { view: 'paywall', icon: '💎', title: 'Plans', sub: 'Subscription UI' },
-  { view: 'connection', icon: '🔗', title: 'Connection', sub: 'Safe endpoints' },
-  { view: 'appearance', icon: '🎛️', title: 'Appearance', sub: '3 button systems' },
+const HUB: { view: MoreView; title: string; sub: string }[] = [
+  { view: 'kanban', title: 'Kanban', sub: 'Drag cards between columns' },
+  { view: 'ideas', title: 'Ideas', sub: 'Capture & cycle status' },
+  { view: 'trips', title: 'Trips', sub: 'Itineraries' },
+  { view: 'vault', title: 'Vault', sub: 'Demo secrets + optional lock' },
+  { view: 'agents', title: 'Agents', sub: 'Ping simulated fleet' },
+  { view: 'logs', title: 'Logs', sub: 'Local activity stream' },
+  { view: 'personas', title: 'Personas', sub: 'Built-in assistants' },
+  { view: 'art', title: 'AI Art', sub: 'Mock generation' },
+  { view: 'phone', title: 'Phone booking', sub: 'Mock reservation' },
+  { view: 'paywall', title: 'Plans', sub: 'Subscription UI' },
+  { view: 'connection', title: 'Connection', sub: 'Safe endpoints' },
+  { view: 'appearance', title: 'Appearance', sub: '3 button systems' },
 ]
 
 type CreateKind = 'kanban' | 'idea' | 'trip' | 'vault' | 'agent' | 'art' | 'phone' | null
@@ -184,25 +185,29 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
               background: 'var(--surface)',
             }}
           >
-            <span aria-hidden>✨</span>
+            <IconBadge name="sparkles" />
             <div style={{ flex: 1, textAlign: 'left' }}>
               <p className="row-title" style={{ margin: 0 }}>
                 Setup coach
               </p>
               <p className="row-sub">Tour, auto-configure, and feature Q&A</p>
             </div>
-            <span className="chev">›</span>
+            <span className="chev">
+              <Icon name="chevron" size={18} />
+            </span>
           </button>
         ) : null}
         <div className="card">
           {HUB.map((item) => (
             <button key={item.view} type="button" className="row" onClick={() => onView(item.view)}>
-              <span className="row-ico">{item.icon}</span>
+              <IconBadge name={HUB_ICONS[item.view] || 'more'} />
               <span>
                 <p className="row-title">{item.title}</p>
                 <p className="row-sub">{item.sub}</p>
               </span>
-              <span className="chev">›</span>
+              <span className="chev">
+                <Icon name="chevron" size={18} />
+              </span>
             </button>
           ))}
         </div>

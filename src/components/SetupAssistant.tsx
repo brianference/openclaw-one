@@ -10,6 +10,7 @@ import {
 import { markAutoConfigured, patchSetup } from '../lib/store'
 import { useDemoStore } from '../lib/useDemoStore'
 import { redactSecrets } from '../lib/security'
+import { Icon } from './icons'
 
 export type SetupAssistantProps = {
   open: boolean
@@ -164,7 +165,7 @@ export function SetupAssistant({ open, onOpenChange, onNavigate }: SetupAssistan
           onClick={() => onOpenChange(true)}
           aria-label="Open setup coach"
         >
-          <span aria-hidden>✨</span>
+          <Icon name="sparkles" size={18} />
           Setup
           {!state.setup.walkthroughCompleted && !state.setup.coachDismissed ? (
             <span className="coach-dot" aria-hidden />

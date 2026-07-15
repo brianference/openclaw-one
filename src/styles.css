@@ -442,9 +442,57 @@ a { color: var(--primary); }
   border: var(--hairline); background: var(--surface);
   text-align: center; cursor: pointer; color: inherit;
 }
-.tile .emoji { font-size: 22px; display: block; margin-bottom: 6px; }
+.tile .emoji,
+.tile-ico {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 8px;
+  border-radius: 12px;
+  background: var(--primary-soft);
+  color: var(--primary);
+}
 .tile strong { display: block; font-size: 13px; }
 .tile span { font-size: 11px; color: var(--text-muted); }
+
+.icon-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+.icon-badge--accent {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent);
+}
+.icon-badge--success {
+  background: color-mix(in srgb, var(--success) 18%, transparent);
+  color: var(--success);
+}
+.icon-badge--warn {
+  background: color-mix(in srgb, var(--warning) 18%, transparent);
+  color: var(--warning);
+}
+.icon-badge--muted {
+  background: var(--surface2);
+  color: var(--text-dim);
+}
+
+.tab-ico {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+}
+.tab-ico svg { display: block; }
 
 .stats {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
@@ -463,9 +511,46 @@ a { color: var(--primary); }
 }
 .f-tile {
   aspect-ratio: 1; border: none; border-radius: var(--radius-sm);
-  background: var(--primary-soft); color: var(--text);
+  background: var(--primary-soft);
+  color: var(--text);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 6px; cursor: pointer; font-size: 12px; font-weight: 600; position: relative;
+  gap: 8px; cursor: pointer; font-size: 12px; font-weight: 600; position: relative;
+  min-height: 88px;
+}
+.f-tile svg { color: var(--primary); }
+.f-tile span {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.row-ico {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-soft);
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.chev {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  color: var(--text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 .badge {
   position: absolute; top: 6px; right: 6px; font-size: 9px; font-weight: 800;

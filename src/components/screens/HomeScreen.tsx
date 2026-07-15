@@ -1,5 +1,6 @@
 import { useDemoStore } from '../../lib/useDemoStore'
 import type { MoreView, TabId } from '../../data/seed'
+import { Icon, IconBadge } from '../icons'
 
 export type HomeScreenProps = {
   onOpenTab: (tab: TabId) => void
@@ -16,6 +17,7 @@ function greeting(): string {
 
 /**
  * MobileClaw Home — greeting, plan, quick actions, stats, feature grid.
+ * Icons: SVG (ui-ux-pro-max: no emoji as structural icons).
  */
 export function HomeScreen({ onOpenTab, onOpenMore, onOpenCoach }: HomeScreenProps) {
   const s = useDemoStore()
@@ -37,7 +39,7 @@ export function HomeScreen({ onOpenTab, onOpenMore, onOpenCoach }: HomeScreenPro
           style={{ marginBottom: 12, width: 'calc(100% - 32px)', cursor: 'pointer' }}
           onClick={onOpenCoach}
         >
-          <span aria-hidden>✨</span>
+          <IconBadge name="sparkles" />
           <div style={{ flex: 1, textAlign: 'left' }}>
             <p className="row-title" style={{ margin: 0 }}>
               New here?
@@ -51,7 +53,7 @@ export function HomeScreen({ onOpenTab, onOpenMore, onOpenCoach }: HomeScreenPro
       ) : null}
 
       <div className="banner">
-        <span aria-hidden>💎</span>
+        <IconBadge name="gem" tone="accent" />
         <div style={{ flex: 1 }}>
           <p className="row-title" style={{ margin: 0 }}>
             {s.user.tier.toUpperCase()} plan
@@ -66,27 +68,37 @@ export function HomeScreen({ onOpenTab, onOpenMore, onOpenCoach }: HomeScreenPro
       <p className="section">Quick actions</p>
       <div className="h-scroll">
         <button type="button" className="tile" onClick={() => onOpenTab('chat')}>
-          <span className="emoji">💬</span>
+          <span className="tile-ico">
+            <Icon name="chat" size={22} />
+          </span>
           <strong>New chat</strong>
           <span>Ask anything</span>
         </button>
         <button type="button" className="tile" onClick={() => onOpenMore('art')}>
-          <span className="emoji">🎨</span>
+          <span className="tile-ico">
+            <Icon name="image" size={22} />
+          </span>
           <strong>AI art</strong>
           <span>Mock studio</span>
         </button>
         <button type="button" className="tile" onClick={() => onOpenMore('trips')}>
-          <span className="emoji">✈️</span>
+          <span className="tile-ico">
+            <Icon name="plane" size={22} />
+          </span>
           <strong>Trips</strong>
           <span>Itineraries</span>
         </button>
         <button type="button" className="tile" onClick={() => onOpenMore('phone')}>
-          <span className="emoji">📞</span>
+          <span className="tile-ico">
+            <Icon name="phone" size={22} />
+          </span>
           <strong>AI call</strong>
           <span>Book table</span>
         </button>
         <button type="button" className="tile" onClick={() => onOpenMore('vault')}>
-          <span className="emoji">🛡️</span>
+          <span className="tile-ico">
+            <Icon name="shield" size={22} />
+          </span>
           <strong>Vault</strong>
           <span>Demo secrets</span>
         </button>
@@ -110,29 +122,29 @@ export function HomeScreen({ onOpenTab, onOpenMore, onOpenCoach }: HomeScreenPro
       <p className="section">Features</p>
       <div className="grid3">
         <button type="button" className="f-tile" onClick={() => onOpenTab('brain')}>
-          🧠<br />
-          Brain
+          <Icon name="brain" size={24} />
+          <span>Brain</span>
         </button>
         <button type="button" className="f-tile" onClick={() => onOpenMore('vault')}>
-          🛡️<br />
-          Vault
+          <Icon name="shield" size={24} />
+          <span>Vault</span>
         </button>
         <button type="button" className="f-tile" onClick={() => onOpenTab('tasks')}>
-          ✅<br />
-          Tasks
+          <Icon name="check" size={24} />
+          <span>Tasks</span>
         </button>
         <button type="button" className="f-tile" onClick={() => onOpenMore('agents')}>
           <span className="badge">Pro</span>
-          ⚡<br />
-          Agents
+          <Icon name="bolt" size={24} />
+          <span>Agents</span>
         </button>
         <button type="button" className="f-tile" onClick={() => onOpenMore('kanban')}>
-          📋<br />
-          Kanban
+          <Icon name="board" size={24} />
+          <span>Kanban</span>
         </button>
         <button type="button" className="f-tile" onClick={() => onOpenMore('logs')}>
-          📜<br />
-          Logs
+          <Icon name="scroll" size={24} />
+          <span>Logs</span>
         </button>
       </div>
 
@@ -140,12 +152,14 @@ export function HomeScreen({ onOpenTab, onOpenMore, onOpenCoach }: HomeScreenPro
       <div className="card">
         {s.conversations.slice(0, 4).map((c) => (
           <button key={c.id} type="button" className="row" onClick={() => onOpenTab('chat')}>
-            <span className="row-ico">💬</span>
+            <IconBadge name="message" />
             <span>
               <p className="row-title">{c.title}</p>
               <p className="row-sub">{new Date(c.updatedAt).toLocaleDateString()}</p>
             </span>
-            <span className="chev">›</span>
+            <span className="chev">
+              <Icon name="chevron" size={18} />
+            </span>
           </button>
         ))}
       </div>
@@ -154,7 +168,9 @@ export function HomeScreen({ onOpenTab, onOpenMore, onOpenCoach }: HomeScreenPro
       <div className="h-scroll">
         {s.trips.map((t) => (
           <button key={t.id} type="button" className="tile" onClick={() => onOpenMore('trips')}>
-            <span className="emoji">{t.emoji}</span>
+            <span className="tile-ico">
+              <Icon name="plane" size={22} />
+            </span>
             <strong>{t.title}</strong>
             <span>{t.destination}</span>
           </button>

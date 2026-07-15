@@ -1,13 +1,14 @@
 import type { ReactNode } from 'react'
 import type { ButtonStyle, TabId } from '../data/seed'
 import type { ThemeMode } from '../data/seed'
+import { Icon, TAB_ICONS } from './icons'
 
-const TABS: { id: TabId; label: string; icon: string }[] = [
-  { id: 'home', label: 'Home', icon: '⌂' },
-  { id: 'chat', label: 'Chat', icon: '💬' },
-  { id: 'tasks', label: 'Tasks', icon: '✓' },
-  { id: 'brain', label: 'Brain', icon: '🧠' },
-  { id: 'more', label: 'More', icon: '•••' },
+const TABS: { id: TabId; label: string }[] = [
+  { id: 'home', label: 'Home' },
+  { id: 'chat', label: 'Chat' },
+  { id: 'tasks', label: 'Tasks' },
+  { id: 'brain', label: 'Brain' },
+  { id: 'more', label: 'More' },
 ]
 
 const TITLES: Record<TabId, string> = {
@@ -31,7 +32,7 @@ export type PhoneShellProps = {
 }
 
 /**
- * iPhone-style chrome + desktop rails. No design-compare in primary nav.
+ * iPhone-style chrome + desktop rails. SVG icons (no emoji nav).
  */
 export function PhoneShell({
   tab,
@@ -67,12 +68,7 @@ export function PhoneShell({
         <div className="desktop-card">
           <h3>Tools</h3>
           {onOpenCoach ? (
-            <button
-              type="button"
-              className="btn"
-              style={{ width: '100%' }}
-              onClick={onOpenCoach}
-            >
+            <button type="button" className="btn" style={{ width: '100%' }} onClick={onOpenCoach}>
               Setup coach
             </button>
           ) : null}
@@ -104,7 +100,7 @@ export function PhoneShell({
           <div className="top-actions">
             {onOpenCoach ? (
               <button type="button" className="icon-btn" aria-label="Setup coach" onClick={onOpenCoach}>
-                ✨
+                <Icon name="sparkles" size={20} />
               </button>
             ) : null}
             <button
@@ -113,7 +109,7 @@ export function PhoneShell({
               aria-label="Toggle light and dark mode"
               onClick={onToggleTheme}
             >
-              {themeMode === 'dark' ? '☀️' : '🌙'}
+              <Icon name={themeMode === 'dark' ? 'sun' : 'moon'} size={20} />
             </button>
           </div>
         </header>
@@ -144,23 +140,26 @@ export function PhoneShell({
             }
           }}
         >
-          {TABS.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              role="tab"
-              className={`tab${tab === t.id ? ' is-active' : ''}`}
-              aria-selected={tab === t.id}
-              aria-current={tab === t.id ? 'page' : undefined}
-              tabIndex={tab === t.id ? 0 : -1}
-              onClick={() => onTabChange(t.id)}
-            >
-              <span className="tab-ico" aria-hidden>
-                {t.icon}
-              </span>
-              {t.label}
-            </button>
-          ))}
+          {TABS.map((t) => {
+            const active = tab === t.id
+            return (
+              <button
+                key={t.id}
+                type="button"
+                role="tab"
+                className={`tab${active ? ' is-active' : ''}`}
+                aria-selected={active}
+                aria-current={active ? 'page' : undefined}
+                tabIndex={active ? 0 : -1}
+                onClick={() => onTabChange(t.id)}
+              >
+                <span className="tab-ico">
+                  <Icon name={TAB_ICONS[t.id]} size={22} strokeWidth={active ? 2.1 : 1.75} />
+                </span>
+                {t.label}
+              </button>
+            )
+          })}
         </nav>
       </div>
 
