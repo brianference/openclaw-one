@@ -31,6 +31,17 @@ export type IconName =
   | 'todo'
   | 'research'
   | 'all'
+  | 'x'
+  | 'plus'
+  | 'arrow-left'
+  | 'search'
+  | 'pin'
+  | 'send'
+  | 'lock'
+  | 'unlock'
+  | 'grip'
+  | 'inbox'
+  | 'alert'
 
 export type IconProps = {
   name: IconName
@@ -70,6 +81,18 @@ const PATHS: Record<IconName, string> = {
   todo: 'M9 12l2 2 4-4M7 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z',
   research: 'M10 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm5-2 5 5',
   all: 'M4 6h16M4 12h16M4 18h10',
+  // Lucide-referenced chrome actions (hand-authored, no package)
+  x: 'M18 6 6 18M6 6l12 12',
+  plus: 'M12 5v14M5 12h14',
+  'arrow-left': 'M19 12H5M12 19l-7-7 7-7',
+  search: 'M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm10 2-4.35-4.35',
+  pin: 'M12 17v5M9 10.76V7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3.76l2 3H7l2-3zM8 3h8',
+  send: 'M22 2 11 13M22 2l-7 20-4-9-9-4z',
+  lock: 'M7 11V8a5 5 0 0 1 10 0v3M5 11h14v10H5V11z',
+  unlock: 'M7 11V8a5 5 0 0 1 9.9-1M5 11h14v10H5V11z',
+  grip: 'M9 5h.01M9 12h.01M9 19h.01M15 5h.01M15 12h.01M15 19h.01',
+  inbox: 'M22 12h-6l-2 3h-4l-2-3H2M4 4h16l2 8v8H2v-8l2-8z',
+  alert: 'M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z',
 }
 
 /**

@@ -1,4 +1,5 @@
 import { useEffect, useId, type ReactNode } from 'react'
+import { Icon } from '../icons'
 
 export type ModalProps = {
   open: boolean
@@ -37,7 +38,7 @@ export function Modal({ open, title, onClose, children, footer }: ModalProps) {
         <header className="modal-header">
           <h2 id={titleId}>{title}</h2>
           <button type="button" className="icon-btn" aria-label="Close" onClick={onClose}>
-            ✕
+            <Icon name="x" size={18} />
           </button>
         </header>
         <div className="modal-body">{children}</div>

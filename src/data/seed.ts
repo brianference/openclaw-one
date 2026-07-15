@@ -26,6 +26,23 @@ export type MoreView =
   | 'connection'
   | 'appearance'
 
+/** Human topbar / hub labels (shared source of truth). */
+export const MORE_VIEW_TITLES: Record<MoreView, string> = {
+  hub: 'More',
+  kanban: 'Kanban',
+  ideas: 'Ideas',
+  trips: 'Trips',
+  vault: 'Vault',
+  agents: 'Agents',
+  logs: 'Logs',
+  personas: 'Personas',
+  art: 'AI Art',
+  phone: 'Phone booking',
+  paywall: 'Plans',
+  connection: 'Connection',
+  appearance: 'Appearance',
+}
+
 export type TaskCategory = 'work' | 'personal' | 'shopping'
 export type NoteCategory = 'idea' | 'note' | 'todo' | 'research'
 export type ColumnId = 'backlog' | 'next-up' | 'progress' | 'done'

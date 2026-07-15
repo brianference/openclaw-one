@@ -71,6 +71,12 @@ export function getState(): DemoState {
 export function resetDemo(): void {
   state = createSeedState()
   persist()
+  // Device-level UX flags cleared so first-run hints return after reset
+  try {
+    localStorage.removeItem('mobileclaw-kanban-hint-dismissed')
+  } catch {
+    /* ignore quota / private mode */
+  }
 }
 
 function uid(prefix: string): string {

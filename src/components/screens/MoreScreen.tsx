@@ -42,19 +42,24 @@ export type MoreScreenProps = {
   onOpenCoach?: () => void
 }
 
-const HUB: { view: MoreView; title: string; sub: string }[] = [
-  { view: 'kanban', title: 'Kanban', sub: 'Drag cards between columns' },
-  { view: 'ideas', title: 'Ideas', sub: 'Capture & cycle status' },
-  { view: 'trips', title: 'Trips', sub: 'Itineraries' },
-  { view: 'vault', title: 'Vault', sub: 'Demo secrets + optional lock' },
-  { view: 'agents', title: 'Agents', sub: 'Ping simulated fleet' },
-  { view: 'logs', title: 'Logs', sub: 'Local activity stream' },
-  { view: 'personas', title: 'Personas', sub: 'Built-in assistants' },
-  { view: 'art', title: 'AI Art', sub: 'Mock generation' },
-  { view: 'phone', title: 'Phone booking', sub: 'Mock reservation' },
-  { view: 'paywall', title: 'Plans', sub: 'Subscription UI' },
-  { view: 'connection', title: 'Connection', sub: 'Safe endpoints' },
-  { view: 'appearance', title: 'Appearance', sub: '3 button systems' },
+const HUB: {
+  view: MoreView
+  title: string
+  sub: string
+  tone?: 'primary' | 'accent' | 'success' | 'warn' | 'muted'
+}[] = [
+  { view: 'kanban', title: 'Kanban', sub: 'Drag cards between columns', tone: 'primary' },
+  { view: 'ideas', title: 'Ideas', sub: 'Capture & cycle status', tone: 'warn' },
+  { view: 'trips', title: 'Trips', sub: 'Itineraries', tone: 'accent' },
+  { view: 'vault', title: 'Vault', sub: 'Demo secrets + optional lock', tone: 'success' },
+  { view: 'agents', title: 'Agents', sub: 'Ping simulated fleet', tone: 'primary' },
+  { view: 'logs', title: 'Logs', sub: 'Local activity stream', tone: 'muted' },
+  { view: 'personas', title: 'Personas', sub: 'Built-in assistants', tone: 'accent' },
+  { view: 'art', title: 'AI Art', sub: 'Mock generation', tone: 'warn' },
+  { view: 'phone', title: 'Phone booking', sub: 'Mock reservation', tone: 'primary' },
+  { view: 'paywall', title: 'Plans', sub: 'Subscription UI', tone: 'accent' },
+  { view: 'connection', title: 'Connection', sub: 'Safe endpoints', tone: 'muted' },
+  { view: 'appearance', title: 'Appearance', sub: '3 button systems', tone: 'primary' },
 ]
 
 type CreateKind = 'kanban' | 'idea' | 'trip' | 'vault' | 'agent' | 'art' | 'phone' | null
@@ -73,6 +78,13 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
   const [fieldC, setFieldC] = useState('2')
   const [vaultCat, setVaultCat] = useState<VaultCategory>('other')
   const [dragId, setDragId] = useState<string | null>(null)
+  const [kanbanHint, setKanbanHint] = useState(() => {
+    try {
+      return localStorage.getItem('mobileclaw-kanban-hint-dismissed') !== '1'
+    } catch {
+      return true
+    }
+  })
   const [vaultSessionUnlocked, setVaultSessionUnlocked] = useState(!isVaultLockedOnDisk())
   const [passphrase, setPassphrase] = useState('')
   const [cryptoBusy, setCryptoBusy] = useState(false)
@@ -200,7 +212,7 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
         <div className="card">
           {HUB.map((item) => (
             <button key={item.view} type="button" className="row" onClick={() => onView(item.view)}>
-              <IconBadge name={HUB_ICONS[item.view] || 'more'} />
+              <IconBadge name={HUB_ICONS[item.view] || 'more'} tone={item.tone || 'primary'} />
               <span>
                 <p className="row-title">{item.title}</p>
                 <p className="row-sub">{item.sub}</p>
@@ -235,8 +247,9 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
   }
 
   const back = (
-    <button type="button" className="chip" style={{ margin: '8px 16px' }} onClick={() => onView('hub')}>
-      ← More
+    <button type="button" className="chip chip-ico back-chip" onClick={() => onView('hub')}>
+      <Icon name="arrow-left" size={16} />
+      More
     </button>
   )
 
@@ -245,7 +258,6 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
     return (
       <div className="screen">
         {back}
-        <p className="large-title">Appearance</p>
         <p className="sub">Deep OLED + Aurora dark · pick a button system</p>
         <div className="card card-pad" style={{ margin: '0 16px 12px' }}>
           <p className="row-title" style={{ marginTop: 0 }}>
@@ -308,8 +320,27 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
     return (
       <div className="screen">
         {back}
-        <p className="large-title">Kanban</p>
         <p className="sub">Drag cards between columns · or tap to advance</p>
+        {kanbanHint ? (
+          <div className="gesture-hint" role="status">
+            <Icon name="grip" size={16} />
+            <span>Drag by the handle or tap a card to advance columns</span>
+            <button
+              type="button"
+              className="chip"
+              onClick={() => {
+                try {
+                  localStorage.setItem('mobileclaw-kanban-hint-dismissed', '1')
+                } catch {
+                  /* ignore */
+                }
+                setKanbanHint(false)
+              }}
+            >
+              Got it
+            </button>
+          </div>
+        ) : null}
         <div className="board">
           {cols.map((col) => (
             <div
@@ -335,10 +366,15 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
                       moveKanban(card.id, next)
                     }}
                   >
-                    {card.title}
-                    <small>
-                      {card.priority} · drag or tap
-                    </small>
+                    <span className="k-grip" aria-hidden>
+                      <Icon name="grip" size={14} />
+                    </span>
+                    <span className="k-card-body">
+                      {card.title}
+                      <small>
+                        {card.priority} · drag or tap
+                      </small>
+                    </span>
                   </button>
                 ))}
             </div>
@@ -346,7 +382,8 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
         </div>
         <div className="fab-wrap">
           <button type="button" className="btn" onClick={() => openCreate('kanban')}>
-            + Card
+            <Icon name="plus" size={16} />
+            Card
           </button>
         </div>
         <CreateModal
@@ -369,8 +406,15 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
     return (
       <div className="screen">
         {back}
-        <p className="large-title">Ideas</p>
         <div className="stack">
+          {s.ideas.length === 0 ? (
+            <p className="empty">
+              <span className="empty-ico" aria-hidden>
+                <Icon name="inbox" size={28} />
+              </span>
+              No ideas yet.
+            </p>
+          ) : null}
           {s.ideas.map((idea) => (
             <button
               key={idea.id}
@@ -394,7 +438,8 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
         </div>
         <div className="fab-wrap">
           <button type="button" className="btn" onClick={() => openCreate('idea')}>
-            + Idea
+            <Icon name="plus" size={16} />
+            Idea
           </button>
         </div>
         <CreateModal
@@ -421,7 +466,6 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
     return (
       <div className="screen">
         {back}
-        <p className="large-title">Trips</p>
         <div className="stack">
           {s.trips.map((trip) => (
             <div
@@ -448,7 +492,8 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
         </div>
         <div className="fab-wrap">
           <button type="button" className="btn" onClick={() => openCreate('trip')}>
-            + Trip
+            <Icon name="plus" size={16} />
+            Trip
           </button>
         </div>
         <CreateModal
@@ -476,7 +521,6 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
     return (
       <div className="screen">
         {back}
-        <p className="large-title">Vault</p>
         <p className="sub">Demo values only · optional WebCrypto passphrase lock</p>
         {err ? <p className="err pad">{err}</p> : null}
 
@@ -506,6 +550,7 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
               disabled={cryptoBusy || passphrase.length < 4 || locked}
               onClick={() => void lockVault()}
             >
+              <Icon name="lock" size={16} />
               Lock vault
             </button>
             <button
@@ -514,10 +559,12 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
               disabled={cryptoBusy || passphrase.length < 4 || !isVaultLockedOnDisk()}
               onClick={() => void unlockVault()}
             >
+              <Icon name="unlock" size={16} />
               Unlock
             </button>
             {vaultSessionUnlocked && isVaultLockedOnDisk() ? (
               <button type="button" className="btn btn-ghost" onClick={sessionLock}>
+                <Icon name="lock" size={16} />
                 Lock session
               </button>
             ) : null}
@@ -566,7 +613,8 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
             </div>
             <div className="fab-wrap">
               <button type="button" className="btn" onClick={() => openCreate('vault')}>
-                + Vault item
+                <Icon name="plus" size={16} />
+                Vault item
               </button>
             </div>
           </>
@@ -610,7 +658,6 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
     return (
       <div className="screen">
         {back}
-        <p className="large-title">Agents</p>
         <div className="stack">
           {s.agents.map((agent) => (
             <div
@@ -618,7 +665,14 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
               className="item"
               style={{ borderLeftColor: 'var(--primary)', flexDirection: 'column' }}
             >
-              <strong>{agent.name}</strong>
+              <strong className="agent-name">
+                <span
+                  className={`status-dot status-dot--${agent.status}`}
+                  title={agent.status}
+                  aria-hidden
+                />
+                {agent.name}
+              </strong>
               <span className="muted">
                 {agent.agentType} · {agent.status}
               </span>
@@ -653,7 +707,8 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
         </div>
         <div className="fab-wrap">
           <button type="button" className="btn" onClick={() => openCreate('agent')}>
-            + Agent
+            <Icon name="plus" size={16} />
+            Agent
           </button>
         </div>
         <CreateModal
@@ -685,7 +740,6 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
     return (
       <div className="screen">
         {back}
-        <p className="large-title">Logs</p>
         <div className="card">
           {s.logs.map((log) => (
             <div key={log.id} className="log-line">
@@ -703,7 +757,6 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
     return (
       <div className="screen">
         {back}
-        <p className="large-title">Personas</p>
         <div className="card">
           {s.personas.map((p) => (
             <div key={p.id} className="row" style={{ cursor: 'default' }}>
@@ -725,7 +778,6 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
     return (
       <div className="screen">
         {back}
-        <p className="large-title">AI Art</p>
         <p className="sub">Mock studio — no external image API on the public site</p>
         <div className="stack">
           {s.artHistory.map((art) => (
@@ -785,7 +837,6 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
     return (
       <div className="screen">
         {back}
-        <p className="large-title">Phone booking</p>
         <p className="sub">UI-only reservation demo</p>
         <div className="stack">
           {s.phoneBookings.map((b) => (
@@ -842,7 +893,6 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
     return (
       <div className="screen">
         {back}
-        <p className="large-title">Plans</p>
         <p className="sub">UI only — no real payments on the public site</p>
         <div className="stack">
           {(Object.keys(TIER_INFO) as Array<keyof typeof TIER_INFO>).map((tier) => {
@@ -884,7 +934,6 @@ export function MoreScreen({ view, onView, onOpenCoach }: MoreScreenProps) {
     return (
       <div className="screen">
         {back}
-        <p className="large-title">Connection</p>
         <p className="sub">Safe demo endpoints only — tokens blocked</p>
         {err ? <p className="err pad">{err}</p> : null}
         <div className="card card-pad">

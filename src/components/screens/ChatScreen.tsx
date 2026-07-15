@@ -3,6 +3,7 @@ import { CHAT_PUBLIC_CONTEXT } from '../../data/seed'
 import { appendChatMessage, createConversation, setTabMeta } from '../../lib/store'
 import { useDemoStore } from '../../lib/useDemoStore'
 import { redactSecrets } from '../../lib/security'
+import { Icon } from '../icons'
 import { useToast } from '../ui/Toast'
 
 /**
@@ -13,6 +14,7 @@ export function ChatScreen() {
   const { toast } = useToast()
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
+  const [showSkeleton, setShowSkeleton] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [lastSources, setLastSources] = useState<string[]>([])
   const endRef = useRef<HTMLDivElement>(null)
@@ -34,17 +36,27 @@ export function ChatScreen() {
       {
         id: 'notes',
         label: 'Pinned notes',
-        text: s.notes
-          .filter((n) => n.pinned)
-          .map((n) => n.title)
-          .join('; ') || '(none)',
+        text:
+          s.notes
+            .filter((n) => n.pinned)
+            .map((n) => n.title)
+            .join('; ') || '(none)',
       },
     ]
   }, [s.tasks, s.notes, s.selectedModel, persona?.name])
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages.length, busy])
+  }, [messages.length, busy, showSkeleton])
+
+  useEffect(() => {
+    if (!busy) {
+      setShowSkeleton(false)
+      return
+    }
+    const t = window.setTimeout(() => setShowSkeleton(true), 300)
+    return () => window.clearTimeout(t)
+  }, [busy])
 
   async function send(e?: FormEvent) {
     e?.preventDefault()
@@ -101,13 +113,14 @@ export function ChatScreen() {
           <strong>Chats</strong>
           <button
             type="button"
-            className="chip"
+            className="chip chip-ico"
             onClick={() => {
               createConversation('New chat')
               toast('Conversation created')
             }}
           >
-            + New
+            <Icon name="plus" size={14} />
+            New
           </button>
         </div>
         <div className="chat-rail-list">
@@ -141,13 +154,14 @@ export function ChatScreen() {
           </select>
           <button
             type="button"
-            className="chip chat-new-mobile"
+            className="chip chip-ico chat-new-mobile"
             onClick={() => {
               createConversation('New chat')
               toast('Conversation created')
             }}
           >
-            + New
+            <Icon name="plus" size={14} />
+            New
           </button>
           <select
             aria-label="Persona"
@@ -186,7 +200,7 @@ export function ChatScreen() {
           ))}
         </div>
 
-        <div className="chat-log" role="log" aria-live="polite">
+        <div className="chat-log" role="log" aria-live="polite" aria-busy={busy}>
           {messages.map((m) => (
             <div key={m.id} className={`bubble ${m.role === 'user' ? 'user' : 'bot'}`}>
               {m.role === 'assistant' ? (
@@ -204,10 +218,13 @@ export function ChatScreen() {
               </div>
             </div>
           ))}
-          {busy ? (
-            <div className="bubble bot">
+          {busy && showSkeleton ? (
+            <div className="bubble bot skeleton-bubble" aria-hidden>
               <span aria-hidden>{persona?.emoji || '⚡'}</span>
-              <div>Thinking…</div>
+              <div className="skeleton-stack">
+                <span className="skeleton-line" />
+                <span className="skeleton-line short" />
+              </div>
             </div>
           ) : null}
           <div ref={endRef} />
@@ -238,6 +255,7 @@ export function ChatScreen() {
             }}
           />
           <button type="submit" className="btn" disabled={busy || !input.trim()}>
+            <Icon name="send" size={16} />
             Send
           </button>
         </form>

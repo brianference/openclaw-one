@@ -6,7 +6,7 @@ import { TasksScreen } from './components/screens/TasksScreen'
 import { BrainScreen } from './components/screens/BrainScreen'
 import { MoreScreen } from './components/screens/MoreScreen'
 import { SetupAssistant } from './components/SetupAssistant'
-import type { MoreView, TabId } from './data/seed'
+import { MORE_VIEW_TITLES, type MoreView, type TabId } from './data/seed'
 import { applyChrome, initTheme, toggleTheme } from './theme'
 import { useDemoStore } from './lib/useDemoStore'
 import { parseLocation, pushRoute } from './lib/routes'
@@ -75,8 +75,7 @@ export default function App() {
     pushRoute('more', view)
   }
 
-  const moreTitle =
-    moreView === 'hub' ? 'More' : moreView.charAt(0).toUpperCase() + moreView.slice(1)
+  const moreTitle = MORE_VIEW_TITLES[moreView]
 
   return (
     <>

@@ -35,26 +35,41 @@ export function TasksScreen() {
 
   return (
     <div className="screen">
-      <p className="large-title">Tasks</p>
-      <p className="sub">{s.tasks.filter((t) => !t.completed).length} open · demo list</p>
+      <p className="sub">
+        {s.tasks.filter((t) => !t.completed).length} open · demo list
+      </p>
 
       <div className="chips" role="tablist" aria-label="Task filters">
-        {(['all', 'active', 'completed'] as const).map((f) => (
+        {(
+          [
+            { id: 'all' as const, label: 'All', icon: 'all' as const },
+            { id: 'active' as const, label: 'Active', icon: 'todo' as const },
+            { id: 'completed' as const, label: 'Done', icon: 'check' as const },
+          ] as const
+        ).map(({ id, label, icon }) => (
           <button
-            key={f}
+            key={id}
             type="button"
             role="tab"
-            aria-selected={filter === f}
-            className={`chip${filter === f ? ' is-on' : ''}`}
-            onClick={() => setFilter(f)}
+            aria-selected={filter === id}
+            className={`chip chip-ico${filter === id ? ' is-on' : ''}`}
+            onClick={() => setFilter(id)}
           >
-            {f === 'all' ? 'All' : f === 'active' ? 'Active' : 'Done'}
+            <Icon name={icon} size={14} strokeWidth={filter === id ? 2.1 : 1.75} />
+            {label}
           </button>
         ))}
       </div>
 
       <div className="stack">
-        {list.length === 0 ? <p className="empty">No tasks here.</p> : null}
+        {list.length === 0 ? (
+          <p className="empty">
+            <span className="empty-ico" aria-hidden>
+              <Icon name="inbox" size={28} />
+            </span>
+            No tasks here.
+          </p>
+        ) : null}
         {list.map((task) => {
           const color = CAT_COLOR[task.category]
           const overdue =
@@ -95,7 +110,8 @@ export function TasksScreen() {
 
       <div className="fab-wrap">
         <button type="button" className="btn" onClick={() => setOpen(true)}>
-          + New task
+          <Icon name="plus" size={16} />
+          New task
         </button>
       </div>
 

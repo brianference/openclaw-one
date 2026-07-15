@@ -29,6 +29,7 @@ export function SetupAssistant({ open, onOpenChange, onNavigate }: SetupAssistan
   const [step, setStep] = useState(state.setup.lastStepIndex || 0)
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
+  const [showSkeleton, setShowSkeleton] = useState(false)
   const [lines, setLines] = useState<ChatLine[]>([
     {
       id: 'welcome',
@@ -46,7 +47,16 @@ export function SetupAssistant({ open, onOpenChange, onNavigate }: SetupAssistan
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [lines.length, open, mode])
+  }, [lines.length, open, mode, showSkeleton])
+
+  useEffect(() => {
+    if (!busy) {
+      setShowSkeleton(false)
+      return
+    }
+    const t = window.setTimeout(() => setShowSkeleton(true), 300)
+    return () => window.clearTimeout(t)
+  }, [busy])
 
   function runActions(actions: CoachAction[]) {
     for (const action of actions) {
@@ -191,7 +201,7 @@ export function SetupAssistant({ open, onOpenChange, onNavigate }: SetupAssistan
                 patchSetup({ coachDismissed: true })
               }}
             >
-              ✕
+              <Icon name="x" size={18} />
             </button>
           </header>
 
@@ -310,7 +320,12 @@ export function SetupAssistant({ open, onOpenChange, onNavigate }: SetupAssistan
                     ))}
                   </div>
                 ))}
-                {busy ? <div className="coach-bubble bot">Thinking…</div> : null}
+                {busy && showSkeleton ? (
+                  <div className="coach-bubble bot skeleton-bubble" aria-hidden>
+                    <span className="skeleton-line" />
+                    <span className="skeleton-line short" />
+                  </div>
+                ) : null}
                 <div ref={endRef} />
               </div>
               <form className="coach-form" onSubmit={onAsk}>
@@ -321,6 +336,7 @@ export function SetupAssistant({ open, onOpenChange, onNavigate }: SetupAssistan
                   aria-label="Ask the setup coach"
                 />
                 <button type="submit" className="btn" disabled={busy || !input.trim()}>
+                  <Icon name="send" size={16} />
                   Send
                 </button>
               </form>

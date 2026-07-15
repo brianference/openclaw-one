@@ -125,14 +125,6 @@ export function HomeScreen({ onOpenTab, onOpenMore, onOpenCoach }: HomeScreenPro
           <Icon name="brain" size={24} />
           <span>Brain</span>
         </button>
-        <button type="button" className="f-tile" onClick={() => onOpenMore('vault')}>
-          <Icon name="shield" size={24} />
-          <span>Vault</span>
-        </button>
-        <button type="button" className="f-tile" onClick={() => onOpenTab('tasks')}>
-          <Icon name="check" size={24} />
-          <span>Tasks</span>
-        </button>
         <button type="button" className="f-tile" onClick={() => onOpenMore('agents')}>
           <span className="badge">Pro</span>
           <Icon name="bolt" size={24} />
@@ -145,6 +137,14 @@ export function HomeScreen({ onOpenTab, onOpenMore, onOpenCoach }: HomeScreenPro
         <button type="button" className="f-tile" onClick={() => onOpenMore('logs')}>
           <Icon name="scroll" size={24} />
           <span>Logs</span>
+        </button>
+        <button type="button" className="f-tile" onClick={() => onOpenMore('ideas')}>
+          <Icon name="idea" size={24} />
+          <span>Ideas</span>
+        </button>
+        <button type="button" className="f-tile" onClick={() => onOpenMore('personas')}>
+          <Icon name="masks" size={24} />
+          <span>Personas</span>
         </button>
       </div>
 

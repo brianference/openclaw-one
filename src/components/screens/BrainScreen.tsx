@@ -57,16 +57,18 @@ export function BrainScreen() {
 
   return (
     <div className="screen">
-      <p className="large-title">Brain</p>
       <p className="sub">Second brain · local notes only</p>
 
-      <div className="pad" style={{ marginBottom: 8 }}>
+      <div className="pad search-wrap" style={{ marginBottom: 8 }}>
         <label className="visually-hidden" htmlFor="brain-search">
           Search notes
         </label>
+        <span className="search-ico" aria-hidden>
+          <Icon name="search" size={16} />
+        </span>
         <input
           id="brain-search"
-          className="search-input"
+          className="search-input search-input--icon"
           type="search"
           placeholder="Search notes…"
           value={query}
@@ -92,7 +94,12 @@ export function BrainScreen() {
 
       <div className="stack">
         {list.length === 0 ? (
-          <p className="empty">{query ? 'No notes match your search.' : 'No notes here.'}</p>
+          <p className="empty">
+            <span className="empty-ico" aria-hidden>
+              <Icon name="inbox" size={28} />
+            </span>
+            {query ? 'No notes match your search.' : 'No notes here.'}
+          </p>
         ) : null}
         {list.map((note) => {
           const cat = CAT[note.category]
@@ -118,13 +125,14 @@ export function BrainScreen() {
               </p>
               <button
                 type="button"
-                className="chip"
+                className="chip chip-ico"
                 style={{ alignSelf: 'flex-start' }}
                 onClick={() => {
                   toggleNotePin(note.id)
                   toast(note.pinned ? 'Unpinned' : 'Pinned')
                 }}
               >
+                <Icon name="pin" size={14} />
                 {note.pinned ? 'Unpin' : 'Pin'}
               </button>
             </article>
@@ -134,7 +142,8 @@ export function BrainScreen() {
 
       <div className="fab-wrap">
         <button type="button" className="btn" onClick={() => setOpen(true)}>
-          + New note
+          <Icon name="plus" size={16} />
+          New note
         </button>
       </div>
 
